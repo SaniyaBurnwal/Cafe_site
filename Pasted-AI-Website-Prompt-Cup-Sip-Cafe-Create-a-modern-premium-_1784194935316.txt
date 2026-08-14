@@ -1,0 +1,318 @@
+AI Website Prompt – Cup Sip Cafe
+
+Create a modern, premium, fully responsive café website for Cup Sip Cafe with a warm, cozy, and elegant aesthetic. The design should be inspired by high-end café websites, featuring smooth animations, large food photography, earthy color palettes, and a clean user experience.
+
+Navbar
+
+Create a sticky, transparent navbar that becomes solid while scrolling.
+
+Include the following navigation links:
+
+Home
+About
+Menu
+Gallery
+Contact
+
+On the right side of the navbar, add two prominent CTA buttons:
+
+📞 Call Now
+
+Link:
+
+tel:+916289789168
+
+💬 WhatsApp
+
+Link:
+
+https://wa.me/916289789168?text=Hi%20Cup%20Sip%20Cafe!%20I%20would%20like%20to%20know%20more%20about%20your%20menu.
+
+Both buttons should work directly on desktop and mobile devices.
+
+Hero Section
+
+A full-screen hero with a premium café image or looping background video.
+
+Headline:
+Where Every Sip Feels Like Home
+
+Subheading:
+Freshly brewed coffee, delicious food, cozy ambience, and unforgettable moments.
+
+Buttons:
+
+Explore Menu (scrolls to Menu section)
+Chat on WhatsApp (opens WhatsApp directly)
+About
+
+Introduce Cup Sip Cafe as a cozy destination for coffee lovers, food enthusiasts, friends, families, and students. Highlight the warm ambience, freshly prepared food, premium coffee, and affordable prices.
+
+Display:
+
+☕ Fresh Coffee
+🍕 Fresh Food
+🛋 Cozy Seating
+📶 Free Wi-Fi (if available)
+❤️ Friendly Service
+Menu
+
+Organize the menu into filterable categories:
+
+Coffee
+Tea
+Cold Coffee
+Milkshakes
+Mojitos
+Pizza
+Burgers
+Pasta
+Sandwiches
+Fries
+Chicken Snacks
+Desserts
+
+Each menu item should display:
+
+Image
+Name
+Description
+Price
+Veg / Non-Veg badge
+
+Add an Order on WhatsApp button below each item that opens WhatsApp with the item name prefilled.
+
+Example:
+
+https://wa.me/916289789168?text=Hi,%20I'd%20like%20to%20order%20a%20Cappuccino.
+Gallery
+
+Create a Pinterest-style masonry gallery showcasing:
+
+Café Interior
+Exterior
+Coffee
+Food
+Pizza
+Burgers
+Pasta
+Desserts
+Milkshakes
+Customer Moments
+Night Ambience
+
+Clicking an image should open it in a fullscreen lightbox.
+
+Contact
+
+Display:
+
+Address
+BE-6, Sarada Pally (Tagore Park), Kasba, Kolkata, West Bengal 700039
+
+Embed the Google Map using the provided location.
+
+Opening Hours
+Daily: 8:00 AM – 2:00 AM
+
+Phone
++91 62897 89168
+
+Add three large action buttons:
+
+📞 Call Now → tel:+916289789168
+💬 WhatsApp → https://wa.me/916289789168
+📍 Get Directions → Google Maps location
+Floating Action Buttons
+
+Keep these visible on every page:
+
+WhatsApp (bottom-right)
+Phone Call (above WhatsApp)
+Scroll-to-Top
+Footer
+
+Include:
+
+Cup Sip Cafe logo
+Quick Links (Home, About, Menu, Gallery, Contact)
+Address
+Phone Number
+Opening Hours
+Google Maps link
+Copyright
+Animations
+
+Use smooth premium animations:
+
+Fade-in on scroll
+Hover lift effects
+Image zoom on hover
+Smooth scrolling
+Sticky navbar transitions
+Elegant page loading animation
+Technical Requirements
+Next.js + React + TypeScript
+Tailwind CSS
+Framer Motion animations
+Fully responsive (mobile, tablet, desktop)
+SEO optimized
+Lazy-loaded images
+Easy-to-update menu and gallery data (JSON or CMS-ready)
+Functional Call Now and WhatsApp links across the navbar, hero section, menu items, contact section, and floating action buttons
+Fast loading with accessible, modern UI
+
+The final website should feel like a premium café experience, encouraging visitors to explore the menu, view the gallery, and instantly contact or order through WhatsApp or Phone with a single click.
+
+mvp
+MVP Prompt for Cup Sip Cafe Website
+
+Build a clean, modern, mobile-first MVP website for Cup Sip Cafe. The goal is to help customers quickly discover the café, browse the menu, view photos, and contact the café via WhatsApp or phone. Prioritize speed, simplicity, and a premium user experience.
+
+Brand
+Name: Cup Sip Cafe
+Tagline: Every Cup Tells a Story.
+Theme: Warm coffee tones (brown, cream, beige, white) with modern typography and subtle animations.
+Navigation Bar
+
+Sticky navbar with:
+
+Home
+About
+Menu
+Gallery
+Contact
+
+On the right side include two CTA buttons:
+
+📞 Call Now
+
+Direct phone call to +91 62897 89168
+
+💬 WhatsApp
+
+Opens WhatsApp chat with:
+
+Hi Cup Sip Cafe! I'd like to know more about your menu.
+
+Hero Section
+
+Large hero image of the café.
+
+Headline:
+
+Fresh Coffee. Great Food. Cozy Vibes.
+
+Subheading:
+
+Your perfect destination for coffee, delicious food, and memorable moments.
+
+Buttons:
+
+View Menu
+WhatsApp Order
+About
+
+Short introduction describing Cup Sip Cafe as a cozy café serving fresh coffee, snacks, fast food, and desserts in a relaxing atmosphere.
+
+Menu
+
+Display menu as responsive cards grouped into categories:
+
+Coffee
+Tea
+Beverages
+Pizza
+Burgers
+Pasta
+Sandwiches
+Fries
+Chicken Snacks
+Desserts
+
+Each item includes:
+
+Image
+Name
+Short description
+Price
+"Order on WhatsApp" button
+
+Store menu data in a JSON file so it can be updated easily without changing the code.
+
+Gallery
+
+Responsive image gallery with categories:
+
+Interior
+Exterior
+Coffee
+Food
+Desserts
+Customers
+
+Images should open in a lightbox.
+
+Gallery images should load from a simple folder so new photos can be added easily.
+
+Contact
+
+Display:
+
+Address
+BE-6, Sarada Pally (Tagore Park), Kasba, Kolkata, West Bengal 700039
+
+Phone
++91 62897 89168
+
+Opening Hours
+Daily: 8:00 AM – 2:00 AM
+
+Embed Google Maps using the café location.
+
+Buttons:
+
+📞 Call Now
+💬 WhatsApp
+📍 Get Directions
+Floating Buttons
+
+Always visible:
+
+WhatsApp
+Phone Call
+Footer
+
+Include:
+
+Logo
+Quick Links
+Address
+Phone Number
+Opening Hours
+Social Media (Instagram/Facebook placeholders)
+Copyright
+Tech Stack
+Next.js
+React
+TypeScript
+Tailwind CSS
+Framer Motion (light animations)
+Fully responsive
+SEO optimized
+Fast loading with lazy-loaded images
+Admin-Friendly Requirements
+Menu should be editable through a single JSON file.
+Gallery should automatically display all images from a designated folder.
+Phone number and WhatsApp number should be stored in one configuration file so changing them updates the entire website.
+Components should be reusable and modular.
+MVP Goals
+
+The website should enable visitors to:
+
+Learn about the café.
+Browse the menu with prices.
+View the café gallery.
+Instantly call the café.
+Instantly chat on WhatsApp.
+Get directions through Google Maps.
