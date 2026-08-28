@@ -1,20 +1,35 @@
-# Vite ⚡
+https://github.com/emilkowalski/vaul/assets/36730035/fdf8c5e8-ade8-433b-8bb0-4ce10e722516
 
-> Next Generation Frontend Tooling
+Vaul is an unstyled drawer component for React that can be used as a Dialog replacement on tablet and mobile devices. You can read about why and how it was built [here](https://emilkowal.ski/ui/building-a-drawer-component).
 
-- 💡 Instant Server Start
-- ⚡️ Lightning Fast HMR
-- 🛠️ Rich Features
-- 📦 Optimized Build
-- 🔩 Universal Plugin Interface
-- 🔑 Fully Typed APIs
+## Usage
 
-Vite (French word for "fast", pronounced `/vit/`) is a new breed of frontend build tool that significantly improves the frontend development experience. It consists of two major parts:
+To start using the library, install it in your project:,
 
-- A dev server that serves your source files over [native ES modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules), with [rich built-in features](https://vite.dev/guide/features.html) and astonishingly fast [Hot Module Replacement (HMR)](https://vite.dev/guide/features.html#hot-module-replacement).
+```bash
+npm install vaul
+```
 
-- A [build command](https://vite.dev/guide/build.html) that bundles your code with [Rollup](https://rollupjs.org), pre-configured to output highly optimized static assets for production.
+Use the drawer in your app.
 
-In addition, Vite is highly extensible via its [Plugin API](https://vite.dev/guide/api-plugin.html) and [JavaScript API](https://vite.dev/guide/api-javascript.html) with full typing support.
+```jsx
+import { Drawer } from 'vaul';
 
-[Read the Docs to Learn More](https://vite.dev).
+function MyComponent() {
+  return (
+    <Drawer.Root>
+      <Drawer.Trigger>Open</Drawer.Trigger>
+      <Drawer.Portal>
+        <Drawer.Content>
+          <Drawer.Title>Title</Drawer.Title>
+        </Drawer.Content>
+        <Drawer.Overlay />
+      </Drawer.Portal>
+    </Drawer.Root>
+  );
+}
+```
+
+## Documentation
+
+Find the full API reference and examples in the [documentation](https://vaul.emilkowal.ski/getting-started).
