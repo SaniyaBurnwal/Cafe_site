@@ -1,16 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.isInRectangle = exports.Rectangle = void 0;
-var _react = _interopRequireWildcard(require("react"));
-var _clsx = _interopRequireDefault(require("clsx"));
-var _reactSmooth = _interopRequireDefault(require("react-smooth"));
-var _ReactUtils = require("../util/ReactUtils");
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
@@ -23,9 +10,14 @@ function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbol
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); } /**
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+/**
  * @fileOverview Rectangle
  */
+import React, { useEffect, useRef, useState } from 'react';
+import clsx from 'clsx';
+import Animate from 'react-smooth';
+import { filterProps } from '../util/ReactUtils';
 var getRectanglePath = function getRectanglePath(x, y, width, height, radius) {
   var maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2);
   var ySign = height >= 0 ? 1 : -1;
@@ -62,7 +54,7 @@ var getRectanglePath = function getRectanglePath(x, y, width, height, radius) {
   }
   return path;
 };
-var isInRectangle = exports.isInRectangle = function isInRectangle(point, rect) {
+export var isInRectangle = function isInRectangle(point, rect) {
   if (!point || !rect) {
     return false;
   }
@@ -96,14 +88,14 @@ var defaultProps = {
   animationDuration: 1500,
   animationEasing: 'ease'
 };
-var Rectangle = exports.Rectangle = function Rectangle(rectangleProps) {
+export var Rectangle = function Rectangle(rectangleProps) {
   var props = _objectSpread(_objectSpread({}, defaultProps), rectangleProps);
-  var pathRef = (0, _react.useRef)();
-  var _useState = (0, _react.useState)(-1),
+  var pathRef = useRef();
+  var _useState = useState(-1),
     _useState2 = _slicedToArray(_useState, 2),
     totalLength = _useState2[0],
     setTotalLength = _useState2[1];
-  (0, _react.useEffect)(function () {
+  useEffect(function () {
     if (pathRef.current && pathRef.current.getTotalLength) {
       try {
         var pathTotalLength = pathRef.current.getTotalLength();
@@ -129,14 +121,14 @@ var Rectangle = exports.Rectangle = function Rectangle(rectangleProps) {
   if (x !== +x || y !== +y || width !== +width || height !== +height || width === 0 || height === 0) {
     return null;
   }
-  var layerClass = (0, _clsx["default"])('recharts-rectangle', className);
+  var layerClass = clsx('recharts-rectangle', className);
   if (!isUpdateAnimationActive) {
-    return /*#__PURE__*/_react["default"].createElement("path", _extends({}, (0, _ReactUtils.filterProps)(props, true), {
+    return /*#__PURE__*/React.createElement("path", _extends({}, filterProps(props, true), {
       className: layerClass,
       d: getRectanglePath(x, y, width, height, radius)
     }));
   }
-  return /*#__PURE__*/_react["default"].createElement(_reactSmooth["default"], {
+  return /*#__PURE__*/React.createElement(Animate, {
     canBegin: totalLength > 0,
     from: {
       width: width,
@@ -158,7 +150,7 @@ var Rectangle = exports.Rectangle = function Rectangle(rectangleProps) {
       currHeight = _ref.height,
       currX = _ref.x,
       currY = _ref.y;
-    return /*#__PURE__*/_react["default"].createElement(_reactSmooth["default"], {
+    return /*#__PURE__*/React.createElement(Animate, {
       canBegin: totalLength > 0,
       from: "0px ".concat(totalLength === -1 ? 1 : totalLength, "px"),
       to: "".concat(totalLength, "px 0px"),
@@ -167,7 +159,7 @@ var Rectangle = exports.Rectangle = function Rectangle(rectangleProps) {
       duration: animationDuration,
       isActive: isAnimationActive,
       easing: animationEasing
-    }, /*#__PURE__*/_react["default"].createElement("path", _extends({}, (0, _ReactUtils.filterProps)(props, true), {
+    }, /*#__PURE__*/React.createElement("path", _extends({}, filterProps(props, true), {
       className: layerClass,
       d: getRectanglePath(currX, currY, currWidth, currHeight, radius),
       ref: pathRef
