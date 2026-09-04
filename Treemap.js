@@ -1,31 +1,4 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Treemap = void 0;
-var _isNaN = _interopRequireDefault(require("lodash/isNaN"));
-var _isFunction = _interopRequireDefault(require("lodash/isFunction"));
-var _omit = _interopRequireDefault(require("lodash/omit"));
-var _get = _interopRequireDefault(require("lodash/get"));
-var _clsx = _interopRequireDefault(require("clsx"));
-var _react = _interopRequireWildcard(require("react"));
-var _reactSmooth = _interopRequireDefault(require("react-smooth"));
-var _Tooltip = require("../component/Tooltip");
-var _Layer = require("../container/Layer");
-var _Surface = require("../container/Surface");
-var _Polygon = require("../shape/Polygon");
-var _Rectangle = require("../shape/Rectangle");
-var _ChartUtils = require("../util/ChartUtils");
-var _Constants = require("../util/Constants");
-var _DataUtils = require("../util/DataUtils");
-var _DOMUtils = require("../util/DOMUtils");
-var _Global = require("../util/Global");
-var _ReactUtils = require("../util/ReactUtils");
 var _excluded = ["width", "height", "className", "style", "children", "type"];
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
@@ -44,9 +17,28 @@ function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbol
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); } /**
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+import isNan from 'lodash/isNaN';
+import isFunction from 'lodash/isFunction';
+import omit from 'lodash/omit';
+import get from 'lodash/get';
+import clsx from 'clsx';
+/**
  * @fileOverview TreemapChart
  */
+import React, { PureComponent } from 'react';
+import Smooth from 'react-smooth';
+import { Tooltip } from '../component/Tooltip';
+import { Layer } from '../container/Layer';
+import { Surface } from '../container/Surface';
+import { Polygon } from '../shape/Polygon';
+import { Rectangle } from '../shape/Rectangle';
+import { getValueByDataKey } from '../util/ChartUtils';
+import { COLOR_PANEL } from '../util/Constants';
+import { uniqueId } from '../util/DataUtils';
+import { getStringSize } from '../util/DOMUtils';
+import { Global } from '../util/Global';
+import { filterSvgElements, findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
 var NODE_VALUE_KEY = 'value';
 var computeNode = function computeNode(_ref) {
   var depth = _ref.depth,
@@ -70,7 +62,7 @@ var computeNode = function computeNode(_ref) {
     }, 0);
   } else {
     // TODO need to verify valueKey
-    nodeValue = (0, _isNaN["default"])(node[valueKey]) || node[valueKey] <= 0 ? 0 : node[valueKey];
+    nodeValue = isNan(node[valueKey]) || node[valueKey] <= 0 ? 0 : node[valueKey];
   }
   return _objectSpread(_objectSpread({}, node), {}, _defineProperty(_defineProperty(_defineProperty({
     children: computedChildren
@@ -91,7 +83,7 @@ var getAreaOfChildren = function getAreaOfChildren(children, areaValueRatio) {
   return children.map(function (child) {
     var area = child[NODE_VALUE_KEY] * ratio;
     return _objectSpread(_objectSpread({}, child), {}, {
-      area: (0, _isNaN["default"])(area) || area <= 0 ? 0 : area
+      area: isNan(area) || area <= 0 ? 0 : area
     });
   });
 };
@@ -217,7 +209,7 @@ var defaultState = {
   currentRoot: null,
   nestIndex: []
 };
-var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
+export var Treemap = /*#__PURE__*/function (_PureComponent) {
   function Treemap() {
     var _this;
     _classCallCheck(this, Treemap);
@@ -231,7 +223,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
       _this.setState({
         isAnimationFinished: true
       });
-      if ((0, _isFunction["default"])(onAnimationEnd)) {
+      if (isFunction(onAnimationEnd)) {
         onAnimationEnd();
       }
     });
@@ -240,7 +232,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
       _this.setState({
         isAnimationFinished: false
       });
-      if ((0, _isFunction["default"])(onAnimationStart)) {
+      if (isFunction(onAnimationStart)) {
         onAnimationStart();
       }
     });
@@ -254,7 +246,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
       var _this$props = this.props,
         onMouseEnter = _this$props.onMouseEnter,
         children = _this$props.children;
-      var tooltipItem = (0, _ReactUtils.findChildByType)(children, _Tooltip.Tooltip);
+      var tooltipItem = findChildByType(children, Tooltip);
       if (tooltipItem) {
         this.setState({
           isTooltipActive: true,
@@ -275,7 +267,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
       var _this$props2 = this.props,
         onMouseLeave = _this$props2.onMouseLeave,
         children = _this$props2.children;
-      var tooltipItem = (0, _ReactUtils.findChildByType)(children, _Tooltip.Tooltip);
+      var tooltipItem = findChildByType(children, Tooltip);
       if (tooltipItem) {
         this.setState({
           isTooltipActive: false,
@@ -382,7 +374,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
         };
       }
       if (!isAnimationActive) {
-        return /*#__PURE__*/_react["default"].createElement(_Layer.Layer, event, this.constructor.renderContentItem(content, _objectSpread(_objectSpread({}, nodeProps), {}, {
+        return /*#__PURE__*/React.createElement(Layer, event, this.constructor.renderContentItem(content, _objectSpread(_objectSpread({}, nodeProps), {}, {
           isAnimationActive: false,
           isUpdateAnimationActive: false,
           width: width,
@@ -391,7 +383,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
           y: y
         }), type, colorPanel));
       }
-      return /*#__PURE__*/_react["default"].createElement(_reactSmooth["default"], {
+      return /*#__PURE__*/React.createElement(Smooth, {
         begin: animationBegin,
         duration: animationDuration,
         isActive: isAnimationActive,
@@ -416,7 +408,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
           currY = _ref2.y,
           currWidth = _ref2.width,
           currHeight = _ref2.height;
-        return /*#__PURE__*/_react["default"].createElement(_reactSmooth["default"], {
+        return /*#__PURE__*/React.createElement(Smooth, {
           from: "translate(".concat(translateX, "px, ").concat(translateX, "px)"),
           to: "translate(0, 0)",
           attributeName: "transform",
@@ -424,7 +416,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
           easing: animationEasing,
           isActive: isAnimationActive,
           duration: animationDuration
-        }, /*#__PURE__*/_react["default"].createElement(_Layer.Layer, event, function () {
+        }, /*#__PURE__*/React.createElement(Layer, event, function () {
           // when animation Duration , only render depth=1 nodes
           if (depth > 2 && !isAnimationFinished) {
             return null;
@@ -447,7 +439,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
       var _this$props7 = this.props,
         content = _this$props7.content,
         type = _this$props7.type;
-      var nodeProps = _objectSpread(_objectSpread(_objectSpread({}, (0, _ReactUtils.filterProps)(this.props, false)), node), {}, {
+      var nodeProps = _objectSpread(_objectSpread(_objectSpread({}, filterProps(this.props, false)), node), {}, {
         root: root
       });
       var isLeaf = !node.children || !node.children.length;
@@ -458,7 +450,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
       if (!isCurrentRootChild.length && root.depth && type === 'nest') {
         return null;
       }
-      return /*#__PURE__*/_react["default"].createElement(_Layer.Layer, {
+      return /*#__PURE__*/React.createElement(Layer, {
         key: "recharts-treemap-node-".concat(nodeProps.x, "-").concat(nodeProps.y, "-").concat(nodeProps.name),
         className: "recharts-treemap-depth-".concat(node.depth)
       }, this.renderItem(content, nodeProps, isLeaf), node.children && node.children.length ? node.children.map(function (child) {
@@ -480,7 +472,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
       var _this$props8 = this.props,
         children = _this$props8.children,
         nameKey = _this$props8.nameKey;
-      var tooltipItem = (0, _ReactUtils.findChildByType)(children, _Tooltip.Tooltip);
+      var tooltipItem = findChildByType(children, Tooltip);
       if (!tooltipItem) {
         return null;
       }
@@ -502,10 +494,10 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
       } : null;
       var payload = isTooltipActive && activeNode ? [{
         payload: activeNode,
-        name: (0, _ChartUtils.getValueByDataKey)(activeNode, nameKey, ''),
-        value: (0, _ChartUtils.getValueByDataKey)(activeNode, NODE_VALUE_KEY)
+        name: getValueByDataKey(activeNode, nameKey, ''),
+        value: getValueByDataKey(activeNode, NODE_VALUE_KEY)
       }] : [];
-      return /*#__PURE__*/_react["default"].cloneElement(tooltipItem, {
+      return /*#__PURE__*/React.cloneElement(tooltipItem, {
         viewBox: viewBox,
         active: isTooltipActive,
         coordinate: coordinate,
@@ -523,7 +515,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
         nameKey = _this$props10.nameKey,
         nestIndexContent = _this$props10.nestIndexContent;
       var nestIndex = this.state.nestIndex;
-      return /*#__PURE__*/_react["default"].createElement("div", {
+      return /*#__PURE__*/React.createElement("div", {
         className: "recharts-treemap-nest-index-wrapper",
         style: {
           marginTop: '8px',
@@ -531,12 +523,12 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
         }
       }, nestIndex.map(function (item, i) {
         // TODO need to verify nameKey type
-        var name = (0, _get["default"])(item, nameKey, 'root');
+        var name = get(item, nameKey, 'root');
         var content = null;
-        if ( /*#__PURE__*/_react["default"].isValidElement(nestIndexContent)) {
-          content = /*#__PURE__*/_react["default"].cloneElement(nestIndexContent, item, i);
+        if ( /*#__PURE__*/React.isValidElement(nestIndexContent)) {
+          content = /*#__PURE__*/React.cloneElement(nestIndexContent, item, i);
         }
-        if ((0, _isFunction["default"])(nestIndexContent)) {
+        if (isFunction(nestIndexContent)) {
           content = nestIndexContent(item, i);
         } else {
           content = name;
@@ -544,9 +536,9 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
         return (
           /*#__PURE__*/
           // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-          _react["default"].createElement("div", {
+          React.createElement("div", {
             onClick: _this4.handleNestIndex.bind(_this4, item, i),
-            key: "nest-index-".concat((0, _DataUtils.uniqueId)()),
+            key: "nest-index-".concat(uniqueId()),
             className: "recharts-treemap-nest-index-box",
             style: {
               cursor: 'pointer',
@@ -563,7 +555,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
   }, {
     key: "render",
     value: function render() {
-      if (!(0, _ReactUtils.validateWidthHeight)(this)) {
+      if (!validateWidthHeight(this)) {
         return null;
       }
       var _this$props11 = this.props,
@@ -574,9 +566,9 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
         children = _this$props11.children,
         type = _this$props11.type,
         others = _objectWithoutProperties(_this$props11, _excluded);
-      var attrs = (0, _ReactUtils.filterProps)(others, false);
-      return /*#__PURE__*/_react["default"].createElement("div", {
-        className: (0, _clsx["default"])('recharts-wrapper', className),
+      var attrs = filterProps(others, false);
+      return /*#__PURE__*/React.createElement("div", {
+        className: clsx('recharts-wrapper', className),
         style: _objectSpread(_objectSpread({}, style), {}, {
           position: 'relative',
           cursor: 'default',
@@ -584,10 +576,10 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
           height: height
         }),
         role: "region"
-      }, /*#__PURE__*/_react["default"].createElement(_Surface.Surface, _extends({}, attrs, {
+      }, /*#__PURE__*/React.createElement(Surface, _extends({}, attrs, {
         width: width,
         height: type === 'nest' ? height - 30 : height
-      }), this.renderAllNodes(), (0, _ReactUtils.filterSvgElements)(children)), this.renderTooltip(), type === 'nest' && this.renderNestIndex());
+      }), this.renderAllNodes(), filterSvgElements(children)), this.renderTooltip(), type === 'nest' && this.renderNestIndex());
     }
   }], [{
     key: "getDerivedStateFromProps",
@@ -623,10 +615,10 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
   }, {
     key: "renderContentItem",
     value: function renderContentItem(content, nodeProps, type, colorPanel) {
-      if ( /*#__PURE__*/_react["default"].isValidElement(content)) {
-        return /*#__PURE__*/_react["default"].cloneElement(content, nodeProps);
+      if ( /*#__PURE__*/React.isValidElement(content)) {
+        return /*#__PURE__*/React.cloneElement(content, nodeProps);
       }
-      if ((0, _isFunction["default"])(content)) {
+      if (isFunction(content)) {
         return content(nodeProps);
       }
       // optimize default shape
@@ -637,7 +629,7 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
         index = nodeProps.index;
       var arrow = null;
       if (width > 10 && height > 10 && nodeProps.children && type === 'nest') {
-        arrow = /*#__PURE__*/_react["default"].createElement(_Polygon.Polygon, {
+        arrow = /*#__PURE__*/React.createElement(Polygon, {
           points: [{
             x: x + 2,
             y: y + height / 2
@@ -651,31 +643,31 @@ var Treemap = exports.Treemap = /*#__PURE__*/function (_PureComponent) {
         });
       }
       var text = null;
-      var nameSize = (0, _DOMUtils.getStringSize)(nodeProps.name);
+      var nameSize = getStringSize(nodeProps.name);
       if (width > 20 && height > 20 && nameSize.width < width && nameSize.height < height) {
-        text = /*#__PURE__*/_react["default"].createElement("text", {
+        text = /*#__PURE__*/React.createElement("text", {
           x: x + 8,
           y: y + height / 2 + 7,
           fontSize: 14
         }, nodeProps.name);
       }
-      var colors = colorPanel || _Constants.COLOR_PANEL;
-      return /*#__PURE__*/_react["default"].createElement("g", null, /*#__PURE__*/_react["default"].createElement(_Rectangle.Rectangle, _extends({
+      var colors = colorPanel || COLOR_PANEL;
+      return /*#__PURE__*/React.createElement("g", null, /*#__PURE__*/React.createElement(Rectangle, _extends({
         fill: nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)',
         stroke: "#fff"
-      }, (0, _omit["default"])(nodeProps, 'children'), {
+      }, omit(nodeProps, 'children'), {
         role: "img"
       })), arrow, text);
     }
   }]);
-}(_react.PureComponent);
+}(PureComponent);
 _defineProperty(Treemap, "displayName", 'Treemap');
 _defineProperty(Treemap, "defaultProps", {
   aspectRatio: 0.5 * (1 + Math.sqrt(5)),
   dataKey: 'value',
   type: 'flat',
-  isAnimationActive: !_Global.Global.isSsr,
-  isUpdateAnimationActive: !_Global.Global.isSsr,
+  isAnimationActive: !Global.isSsr,
+  isUpdateAnimationActive: !Global.isSsr,
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'linear'

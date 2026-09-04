@@ -1,29 +1,22 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.RadarChart = void 0;
-var _generateCategoricalChart = require("./generateCategoricalChart");
-var _Radar = require("../polar/Radar");
-var _PolarAngleAxis = require("../polar/PolarAngleAxis");
-var _PolarRadiusAxis = require("../polar/PolarRadiusAxis");
-var _PolarUtils = require("../util/PolarUtils");
 /**
  * @fileOverview Radar Chart
  */
-
-var RadarChart = exports.RadarChart = (0, _generateCategoricalChart.generateCategoricalChart)({
+import { generateCategoricalChart } from './generateCategoricalChart';
+import { Radar } from '../polar/Radar';
+import { PolarAngleAxis } from '../polar/PolarAngleAxis';
+import { PolarRadiusAxis } from '../polar/PolarRadiusAxis';
+import { formatAxisMap } from '../util/PolarUtils';
+export var RadarChart = generateCategoricalChart({
   chartName: 'RadarChart',
-  GraphicalChild: _Radar.Radar,
+  GraphicalChild: Radar,
   axisComponents: [{
     axisType: 'angleAxis',
-    AxisComp: _PolarAngleAxis.PolarAngleAxis
+    AxisComp: PolarAngleAxis
   }, {
     axisType: 'radiusAxis',
-    AxisComp: _PolarRadiusAxis.PolarRadiusAxis
+    AxisComp: PolarRadiusAxis
   }],
-  formatAxisMap: _PolarUtils.formatAxisMap,
+  formatAxisMap: formatAxisMap,
   defaultProps: {
     layout: 'centric',
     startAngle: 90,

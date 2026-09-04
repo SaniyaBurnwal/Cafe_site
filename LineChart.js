@@ -1,27 +1,20 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.LineChart = void 0;
-var _generateCategoricalChart = require("./generateCategoricalChart");
-var _Line = require("../cartesian/Line");
-var _XAxis = require("../cartesian/XAxis");
-var _YAxis = require("../cartesian/YAxis");
-var _CartesianUtils = require("../util/CartesianUtils");
 /**
  * @fileOverview Line Chart
  */
-
-var LineChart = exports.LineChart = (0, _generateCategoricalChart.generateCategoricalChart)({
+import { generateCategoricalChart } from './generateCategoricalChart';
+import { Line } from '../cartesian/Line';
+import { XAxis } from '../cartesian/XAxis';
+import { YAxis } from '../cartesian/YAxis';
+import { formatAxisMap } from '../util/CartesianUtils';
+export var LineChart = generateCategoricalChart({
   chartName: 'LineChart',
-  GraphicalChild: _Line.Line,
+  GraphicalChild: Line,
   axisComponents: [{
     axisType: 'xAxis',
-    AxisComp: _XAxis.XAxis
+    AxisComp: XAxis
   }, {
     axisType: 'yAxis',
-    AxisComp: _YAxis.YAxis
+    AxisComp: YAxis
   }],
-  formatAxisMap: _CartesianUtils.formatAxisMap
+  formatAxisMap: formatAxisMap
 });

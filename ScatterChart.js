@@ -1,33 +1,26 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ScatterChart = void 0;
-var _generateCategoricalChart = require("./generateCategoricalChart");
-var _Scatter = require("../cartesian/Scatter");
-var _XAxis = require("../cartesian/XAxis");
-var _YAxis = require("../cartesian/YAxis");
-var _ZAxis = require("../cartesian/ZAxis");
-var _CartesianUtils = require("../util/CartesianUtils");
 /**
  * @fileOverview Scatter Chart
  */
-
-var ScatterChart = exports.ScatterChart = (0, _generateCategoricalChart.generateCategoricalChart)({
+import { generateCategoricalChart } from './generateCategoricalChart';
+import { Scatter } from '../cartesian/Scatter';
+import { XAxis } from '../cartesian/XAxis';
+import { YAxis } from '../cartesian/YAxis';
+import { ZAxis } from '../cartesian/ZAxis';
+import { formatAxisMap } from '../util/CartesianUtils';
+export var ScatterChart = generateCategoricalChart({
   chartName: 'ScatterChart',
-  GraphicalChild: _Scatter.Scatter,
+  GraphicalChild: Scatter,
   defaultTooltipEventType: 'item',
   validateTooltipEventTypes: ['item'],
   axisComponents: [{
     axisType: 'xAxis',
-    AxisComp: _XAxis.XAxis
+    AxisComp: XAxis
   }, {
     axisType: 'yAxis',
-    AxisComp: _YAxis.YAxis
+    AxisComp: YAxis
   }, {
     axisType: 'zAxis',
-    AxisComp: _ZAxis.ZAxis
+    AxisComp: ZAxis
   }],
-  formatAxisMap: _CartesianUtils.formatAxisMap
+  formatAxisMap: formatAxisMap
 });
