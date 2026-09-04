@@ -1,12 +1,6 @@
-"use strict";
+import uniqBy from 'lodash/uniqBy';
+import isFunction from 'lodash/isFunction';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getUniqPayload = getUniqPayload;
-var _uniqBy = _interopRequireDefault(require("lodash/uniqBy"));
-var _isFunction = _interopRequireDefault(require("lodash/isFunction"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 /**
  * This is configuration option that decides how to filter for unique values only:
  *
@@ -15,12 +9,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
  * - function means "use return of this function as the default key"
  */
 
-function getUniqPayload(payload, option, defaultUniqBy) {
+export function getUniqPayload(payload, option, defaultUniqBy) {
   if (option === true) {
-    return (0, _uniqBy["default"])(payload, defaultUniqBy);
+    return uniqBy(payload, defaultUniqBy);
   }
-  if ((0, _isFunction["default"])(option)) {
-    return (0, _uniqBy["default"])(payload, option);
+  if (isFunction(option)) {
+    return uniqBy(payload, option);
   }
   return payload;
 }

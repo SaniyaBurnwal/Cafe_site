@@ -1,13 +1,7 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Global = void 0;
 var parseIsSsrByDefault = function parseIsSsrByDefault() {
   return !(typeof window !== 'undefined' && window.document && window.document.createElement && window.setTimeout);
 };
-var Global = exports.Global = {
+export var Global = {
   isSsr: parseIsSsrByDefault(),
   get: function get(key) {
     return Global[key];

@@ -1,11 +1,4 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.calculateViewBox = void 0;
-var _memoize = _interopRequireDefault(require("lodash/memoize"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+import memoize from 'lodash/memoize';
 /**
  * This is memoized because the viewBox is unlikely to change often
  * - but because it is computed from offset, any change to it would re-render all children.
@@ -13,7 +6,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
  * And because we have many readers of the viewBox, and update it only rarely,
  * then let's optimize with memoization.
  */
-var calculateViewBox = exports.calculateViewBox = (0, _memoize["default"])(function (offset) {
+export var calculateViewBox = memoize(function (offset) {
   return {
     x: offset.left,
     y: offset.top,

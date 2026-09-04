@@ -1,18 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getAngledRectangleWidth = exports.formatAxisMap = exports.createLabeledScales = exports.ScaleHelper = void 0;
-exports.normalizeAngle = normalizeAngle;
-exports.rectWithPoints = exports.rectWithCoords = void 0;
-var _mapValues = _interopRequireDefault(require("lodash/mapValues"));
-var _every = _interopRequireDefault(require("lodash/every"));
-var _ChartUtils = require("./ChartUtils");
-var _ReactUtils = require("./ReactUtils");
-var _DataUtils = require("./DataUtils");
-var _Bar = require("../cartesian/Bar");
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -22,6 +7,13 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+import mapValues from 'lodash/mapValues';
+import every from 'lodash/every';
+import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } from './ChartUtils';
+import { findChildByType } from './ReactUtils';
+import { compareValues, getPercentValue } from './DataUtils';
+import { Bar } from '../cartesian/Bar';
+
 /**
  * Calculate the scale function, position, width, height of axes
  * @param  {Object} props     Latest props
@@ -31,7 +23,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
  * @param  {String} chartName The name of chart
  * @return {Object} Configuration
  */
-var formatAxisMap = exports.formatAxisMap = function formatAxisMap(props, axisMap, offset, axisType, chartName) {
+export var formatAxisMap = function formatAxisMap(props, axisMap, offset, axisType, chartName) {
   var width = props.width,
     height = props.height,
     layout = props.layout,
@@ -47,7 +39,7 @@ var formatAxisMap = exports.formatAxisMap = function formatAxisMap(props, axisMa
     bottom: height - offset.bottom,
     bottomMirror: height - offset.bottom
   };
-  var hasBar = !!(0, _ReactUtils.findChildByType)(children, _Bar.Bar);
+  var hasBar = !!findChildByType(children, Bar);
   return ids.reduce(function (result, id) {
     var axis = axisMap[id];
     var orientation = axis.orientation,
@@ -61,7 +53,7 @@ var formatAxisMap = exports.formatAxisMap = function formatAxisMap(props, axisMa
     if (axis.type === 'number' && (axis.padding === 'gap' || axis.padding === 'no-gap')) {
       var diff = domain[1] - domain[0];
       var smallestDistanceBetweenValues = Infinity;
-      var sortedValues = axis.categoricalDomain.sort(_DataUtils.compareValues);
+      var sortedValues = axis.categoricalDomain.sort(compareValues);
       sortedValues.forEach(function (value, index) {
         if (index > 0) {
           smallestDistanceBetweenValues = Math.min((value || 0) - (sortedValues[index - 1] || 0), smallestDistanceBetweenValues);
@@ -74,7 +66,7 @@ var formatAxisMap = exports.formatAxisMap = function formatAxisMap(props, axisMa
           calculatedPadding = smallestDistanceInPercent * rangeWidth / 2;
         }
         if (axis.padding === 'no-gap') {
-          var gap = (0, _DataUtils.getPercentValue)(props.barCategoryGap, smallestDistanceInPercent * rangeWidth);
+          var gap = getPercentValue(props.barCategoryGap, smallestDistanceInPercent * rangeWidth);
           var halfBand = smallestDistanceInPercent * rangeWidth / 2;
           calculatedPadding = halfBand - gap - (halfBand - gap) / rangeWidth * gap;
         }
@@ -90,12 +82,12 @@ var formatAxisMap = exports.formatAxisMap = function formatAxisMap(props, axisMa
     if (reversed) {
       range = [range[1], range[0]];
     }
-    var _parseScale = (0, _ChartUtils.parseScale)(axis, chartName, hasBar),
+    var _parseScale = parseScale(axis, chartName, hasBar),
       scale = _parseScale.scale,
       realScaleType = _parseScale.realScaleType;
     scale.domain(domain).range(range);
-    (0, _ChartUtils.checkDomainOfScale)(scale);
-    var ticks = (0, _ChartUtils.getTicksOfScale)(scale, _objectSpread(_objectSpread({}, axis), {}, {
+    checkDomainOfScale(scale);
+    var ticks = getTicksOfScale(scale, _objectSpread(_objectSpread({}, axis), {}, {
       realScaleType: realScaleType
     }));
     if (axisType === 'xAxis') {
@@ -115,7 +107,7 @@ var formatAxisMap = exports.formatAxisMap = function formatAxisMap(props, axisMa
       width: axisType === 'xAxis' ? offset.width : axis.width,
       height: axisType === 'yAxis' ? offset.height : axis.height
     });
-    finalAxis.bandSize = (0, _ChartUtils.getBandSizeOfAxis)(finalAxis, ticks);
+    finalAxis.bandSize = getBandSizeOfAxis(finalAxis, ticks);
     if (!axis.hide && axisType === 'xAxis') {
       steps[offsetKey] += (needSpace ? -1 : 1) * finalAxis.height;
     } else if (!axis.hide) {
@@ -124,7 +116,7 @@ var formatAxisMap = exports.formatAxisMap = function formatAxisMap(props, axisMa
     return _objectSpread(_objectSpread({}, result), {}, _defineProperty({}, id, finalAxis));
   }, {});
 };
-var rectWithPoints = exports.rectWithPoints = function rectWithPoints(_ref, _ref2) {
+export var rectWithPoints = function rectWithPoints(_ref, _ref2) {
   var x1 = _ref.x,
     y1 = _ref.y;
   var x2 = _ref2.x,
@@ -142,7 +134,7 @@ var rectWithPoints = exports.rectWithPoints = function rectWithPoints(_ref, _ref
  * @param  {Object} coords     x1, x2, y1, and y2
  * @return {Object} object
  */
-var rectWithCoords = exports.rectWithCoords = function rectWithCoords(_ref3) {
+export var rectWithCoords = function rectWithCoords(_ref3) {
   var x1 = _ref3.x1,
     y1 = _ref3.y1,
     x2 = _ref3.x2,
@@ -155,7 +147,7 @@ var rectWithCoords = exports.rectWithCoords = function rectWithCoords(_ref3) {
     y: y2
   });
 };
-var ScaleHelper = exports.ScaleHelper = /*#__PURE__*/function () {
+export var ScaleHelper = /*#__PURE__*/function () {
   function ScaleHelper(scale) {
     _classCallCheck(this, ScaleHelper);
     this.scale = scale;
@@ -238,7 +230,7 @@ var ScaleHelper = exports.ScaleHelper = /*#__PURE__*/function () {
   }]);
 }();
 _defineProperty(ScaleHelper, "EPS", 1e-4);
-var createLabeledScales = exports.createLabeledScales = function createLabeledScales(options) {
+export var createLabeledScales = function createLabeledScales(options) {
   var scales = Object.keys(options).reduce(function (res, key) {
     return _objectSpread(_objectSpread({}, res), {}, _defineProperty({}, key, ScaleHelper.create(options[key])));
   }, {});
@@ -247,7 +239,7 @@ var createLabeledScales = exports.createLabeledScales = function createLabeledSc
       var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
         bandAware = _ref5.bandAware,
         position = _ref5.position;
-      return (0, _mapValues["default"])(coord, function (value, label) {
+      return mapValues(coord, function (value, label) {
         return scales[label].apply(value, {
           bandAware: bandAware,
           position: position
@@ -255,7 +247,7 @@ var createLabeledScales = exports.createLabeledScales = function createLabeledSc
       });
     },
     isInRange: function isInRange(coord) {
-      return (0, _every["default"])(coord, function (value, label) {
+      return every(coord, function (value, label) {
         return scales[label].isInRange(value);
       });
     }
@@ -265,7 +257,7 @@ var createLabeledScales = exports.createLabeledScales = function createLabeledSc
 /** Normalizes the angle so that 0 <= angle < 180.
  * @param {number} angle Angle in degrees.
  * @return {number} the normalized angle with a value of at least 0 and never greater or equal to 180. */
-function normalizeAngle(angle) {
+export function normalizeAngle(angle) {
   return (angle % 180 + 180) % 180;
 }
 
@@ -274,7 +266,7 @@ function normalizeAngle(angle) {
  * @param {number} angle Angle in degrees in which the text is displayed.
  * @return {number} The width of the largest horizontal line that fits inside a rectangle that is displayed at an angle.
  */
-var getAngledRectangleWidth = exports.getAngledRectangleWidth = function getAngledRectangleWidth(_ref6) {
+export var getAngledRectangleWidth = function getAngledRectangleWidth(_ref6) {
   var width = _ref6.width,
     height = _ref6.height;
   var angle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;

@@ -1,10 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.reduceCSSCalc = reduceCSSCalc;
-exports.safeEvaluateExpression = safeEvaluateExpression;
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -162,7 +155,7 @@ function evaluateExpression(expression) {
   newExpr = calculateArithmetic(newExpr);
   return newExpr;
 }
-function safeEvaluateExpression(expression) {
+export function safeEvaluateExpression(expression) {
   try {
     return evaluateExpression(expression);
   } catch (e) {
@@ -170,7 +163,7 @@ function safeEvaluateExpression(expression) {
     return STR_NAN;
   }
 }
-function reduceCSSCalc(expression) {
+export function reduceCSSCalc(expression) {
   var result = safeEvaluateExpression(expression.slice(5, -1));
   if (result === STR_NAN) {
     // notify the user

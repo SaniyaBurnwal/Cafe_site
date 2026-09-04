@@ -1,10 +1,4 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.shallowEqual = shallowEqual;
-function shallowEqual(a, b) {
+export function shallowEqual(a, b) {
   /* eslint-disable no-restricted-syntax */
   for (var key in a) {
     if ({}.hasOwnProperty.call(a, key) && (!{}.hasOwnProperty.call(b, key) || a[key] !== b[key])) {

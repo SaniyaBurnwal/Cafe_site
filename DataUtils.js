@@ -1,18 +1,9 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.compareValues = void 0;
-exports.findEntryInArray = findEntryInArray;
-exports.uniqueId = exports.mathSign = exports.isPercent = exports.isNumber = exports.isNumOrStr = exports.isNullish = exports.interpolateNumber = exports.hasDuplicate = exports.getPercentValue = exports.getLinearRegression = exports.getAnyElementOfObject = void 0;
-var _isString = _interopRequireDefault(require("lodash/isString"));
-var _isNaN = _interopRequireDefault(require("lodash/isNaN"));
-var _get = _interopRequireDefault(require("lodash/get"));
-var _isNumber = _interopRequireDefault(require("lodash/isNumber"));
-var _isNil = _interopRequireDefault(require("lodash/isNil"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-var mathSign = exports.mathSign = function mathSign(value) {
+import isString from 'lodash/isString';
+import isNan from 'lodash/isNaN';
+import get from 'lodash/get';
+import lodashIsNumber from 'lodash/isNumber';
+import isNil from 'lodash/isNil';
+export var mathSign = function mathSign(value) {
   if (value === 0) {
     return 0;
   }
@@ -21,20 +12,20 @@ var mathSign = exports.mathSign = function mathSign(value) {
   }
   return -1;
 };
-var isPercent = exports.isPercent = function isPercent(value) {
-  return (0, _isString["default"])(value) && value.indexOf('%') === value.length - 1;
+export var isPercent = function isPercent(value) {
+  return isString(value) && value.indexOf('%') === value.length - 1;
 };
-var isNumber = exports.isNumber = function isNumber(value) {
-  return (0, _isNumber["default"])(value) && !(0, _isNaN["default"])(value);
+export var isNumber = function isNumber(value) {
+  return lodashIsNumber(value) && !isNan(value);
 };
-var isNullish = exports.isNullish = function isNullish(value) {
-  return (0, _isNil["default"])(value);
+export var isNullish = function isNullish(value) {
+  return isNil(value);
 };
-var isNumOrStr = exports.isNumOrStr = function isNumOrStr(value) {
-  return isNumber(value) || (0, _isString["default"])(value);
+export var isNumOrStr = function isNumOrStr(value) {
+  return isNumber(value) || isString(value);
 };
 var idCounter = 0;
-var uniqueId = exports.uniqueId = function uniqueId(prefix) {
+export var uniqueId = function uniqueId(prefix) {
   var id = ++idCounter;
   return "".concat(prefix || '').concat(id);
 };
@@ -47,10 +38,10 @@ var uniqueId = exports.uniqueId = function uniqueId(prefix) {
  * @param {boolean} validate      If set to be true, the result will be validated
  * @return {number} value
  */
-var getPercentValue = exports.getPercentValue = function getPercentValue(percent, totalValue) {
+export var getPercentValue = function getPercentValue(percent, totalValue) {
   var defaultValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
   var validate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-  if (!isNumber(percent) && !(0, _isString["default"])(percent)) {
+  if (!isNumber(percent) && !isString(percent)) {
     return defaultValue;
   }
   var value;
@@ -60,7 +51,7 @@ var getPercentValue = exports.getPercentValue = function getPercentValue(percent
   } else {
     value = +percent;
   }
-  if ((0, _isNaN["default"])(value)) {
+  if (isNan(value)) {
     value = defaultValue;
   }
   if (validate && value > totalValue) {
@@ -68,7 +59,7 @@ var getPercentValue = exports.getPercentValue = function getPercentValue(percent
   }
   return value;
 };
-var getAnyElementOfObject = exports.getAnyElementOfObject = function getAnyElementOfObject(obj) {
+export var getAnyElementOfObject = function getAnyElementOfObject(obj) {
   if (!obj) {
     return null;
   }
@@ -78,7 +69,7 @@ var getAnyElementOfObject = exports.getAnyElementOfObject = function getAnyEleme
   }
   return null;
 };
-var hasDuplicate = exports.hasDuplicate = function hasDuplicate(ary) {
+export var hasDuplicate = function hasDuplicate(ary) {
   if (!Array.isArray(ary)) {
     return false;
   }
@@ -95,7 +86,7 @@ var hasDuplicate = exports.hasDuplicate = function hasDuplicate(ary) {
 };
 
 /* @todo consider to rename this function into `getInterpolator` */
-var interpolateNumber = exports.interpolateNumber = function interpolateNumber(numberA, numberB) {
+export var interpolateNumber = function interpolateNumber(numberA, numberB) {
   if (isNumber(numberA) && isNumber(numberB)) {
     return function (t) {
       return numberA + t * (numberB - numberA);
@@ -105,12 +96,12 @@ var interpolateNumber = exports.interpolateNumber = function interpolateNumber(n
     return numberB;
   };
 };
-function findEntryInArray(ary, specifiedKey, specifiedValue) {
+export function findEntryInArray(ary, specifiedKey, specifiedValue) {
   if (!ary || !ary.length) {
     return null;
   }
   return ary.find(function (entry) {
-    return entry && (typeof specifiedKey === 'function' ? specifiedKey(entry) : (0, _get["default"])(entry, specifiedKey)) === specifiedValue;
+    return entry && (typeof specifiedKey === 'function' ? specifiedKey(entry) : get(entry, specifiedKey)) === specifiedValue;
   });
 }
 
@@ -119,7 +110,7 @@ function findEntryInArray(ary, specifiedKey, specifiedValue) {
  * @param {Array} data The array of points
  * @returns {Object} The domain of x, and the parameter of linear function
  */
-var getLinearRegression = exports.getLinearRegression = function getLinearRegression(data) {
+export var getLinearRegression = function getLinearRegression(data) {
   if (!data || !data.length) {
     return null;
   }
@@ -165,11 +156,11 @@ var getLinearRegression = exports.getLinearRegression = function getLinearRegres
  * @param {unknown} b The second item to compare
  * @return {number} A negative number if a < b, a positive number if a > b, 0 if equal
  */
-var compareValues = exports.compareValues = function compareValues(a, b) {
+export var compareValues = function compareValues(a, b) {
   if (isNumber(a) && isNumber(b)) {
     return a - b;
   }
-  if ((0, _isString["default"])(a) && (0, _isString["default"])(b)) {
+  if (isString(a) && isString(b)) {
     return a.localeCompare(b);
   }
   if (a instanceof Date && b instanceof Date) {

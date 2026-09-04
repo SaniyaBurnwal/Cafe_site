@@ -1,9 +1,3 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getEveryNthWithCondition = getEveryNthWithCondition;
 /**
  * Given an array and a number N, return a new array which contains every nTh
  * element of the input array. For n below 1, an empty array is returned.
@@ -13,7 +7,7 @@ exports.getEveryNthWithCondition = getEveryNthWithCondition;
  * @param {Function} isValid A function to evaluate a candidate form the array
  * @returns {T[]} The result array of the same type as the input array.
  */
-function getEveryNthWithCondition(array, n, isValid) {
+export function getEveryNthWithCondition(array, n, isValid) {
   if (n < 1) {
     return [];
   }

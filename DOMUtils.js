@@ -1,11 +1,4 @@
-"use strict";
-
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getStyleString = exports.getStringSize = exports.getOffset = void 0;
-var _Global = require("./Global");
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -17,6 +10,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+import { Global } from './Global';
 var stringCache = {
   widthCache: {},
   cacheCount: 0
@@ -49,7 +43,7 @@ function camelToMiddleLine(text) {
   }, []);
   return formatStrs.join('');
 }
-var getStyleString = exports.getStyleString = function getStyleString(style) {
+export var getStyleString = function getStyleString(style) {
   return Object.keys(style).reduce(function (result, s) {
     return "".concat(result).concat(camelToMiddleLine(s), ":").concat(autoCompleteStyle(s, style[s]), ";");
   }, '');
@@ -63,9 +57,9 @@ function removeInvalidKeys(obj) {
   });
   return copyObj;
 }
-var getStringSize = exports.getStringSize = function getStringSize(text) {
+export var getStringSize = function getStringSize(text) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  if (text === undefined || text === null || _Global.Global.isSsr) {
+  if (text === undefined || text === null || Global.isSsr) {
     return {
       width: 0,
       height: 0
@@ -110,7 +104,7 @@ var getStringSize = exports.getStringSize = function getStringSize(text) {
     };
   }
 };
-var getOffset = exports.getOffset = function getOffset(rect) {
+export var getOffset = function getOffset(rect) {
   return {
     top: rect.top + window.scrollY - document.documentElement.clientTop,
     left: rect.left + window.scrollX - document.documentElement.clientLeft

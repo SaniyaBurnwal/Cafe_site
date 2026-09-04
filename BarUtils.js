@@ -1,16 +1,4 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.BarRectangle = BarRectangle;
-exports.minPointSizeCallback = void 0;
-var _react = _interopRequireDefault(require("react"));
-var _tinyInvariant = _interopRequireDefault(require("tiny-invariant"));
-var _ActiveShapeUtils = require("./ActiveShapeUtils");
-var _DataUtils = require("./DataUtils");
 var _excluded = ["x", "y"];
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -20,6 +8,11 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } } return target; }
+import React from 'react';
+import invariant from 'tiny-invariant';
+import { Shape } from './ActiveShapeUtils';
+import { isNullish, isNumber } from './DataUtils';
+
 // Rectangle props is expecting x, y, height, width as numbers, name as a string, and radius as a custom type
 // When props are being spread in from a user defined component in Bar,
 // the prop types of an SVGElement have these typed as something else.
@@ -48,8 +41,8 @@ function typeguardBarRectangleProps(_ref, props) {
     radius: props.radius
   });
 }
-function BarRectangle(props) {
-  return /*#__PURE__*/_react["default"].createElement(_ActiveShapeUtils.Shape, _extends({
+export function BarRectangle(props) {
+  return /*#__PURE__*/React.createElement(Shape, _extends({
     shapeType: "rectangle",
     propTransformer: typeguardBarRectangleProps,
     activeClassName: "recharts-active-bar"
@@ -61,15 +54,15 @@ function BarRectangle(props) {
  * @param defaultValue default minPointSize
  * @returns minPointSize
  */
-var minPointSizeCallback = exports.minPointSizeCallback = function minPointSizeCallback(minPointSize) {
+export var minPointSizeCallback = function minPointSizeCallback(minPointSize) {
   var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
   return function (value, index) {
     if (typeof minPointSize === 'number') return minPointSize;
-    var isValueNumberOrNil = (0, _DataUtils.isNumber)(value) || (0, _DataUtils.isNullish)(value);
+    var isValueNumberOrNil = isNumber(value) || isNullish(value);
     if (isValueNumberOrNil) {
       return minPointSize(value, index);
     }
-    !isValueNumberOrNil ? process.env.NODE_ENV !== "production" ? (0, _tinyInvariant["default"])(false, "minPointSize callback function received a value with type of ".concat(_typeof(value), ". Currently only numbers or null/undefined are supported.")) : (0, _tinyInvariant["default"])(false) : void 0;
+    !isValueNumberOrNil ? process.env.NODE_ENV !== "production" ? invariant(false, "minPointSize callback function received a value with type of ".concat(_typeof(value), ". Currently only numbers or null/undefined are supported.")) : invariant(false) : void 0;
     return defaultValue;
   };
 };

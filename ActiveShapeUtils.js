@@ -1,31 +1,4 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Shape = Shape;
-exports.compareFunnel = compareFunnel;
-exports.comparePie = comparePie;
-exports.compareScatter = compareScatter;
-exports.getActiveShapeIndexForTooltip = getActiveShapeIndexForTooltip;
-exports.getPropsFromShapeOption = getPropsFromShapeOption;
-exports.isFunnel = isFunnel;
-exports.isPie = isPie;
-exports.isScatter = isScatter;
-var _react = _interopRequireWildcard(require("react"));
-var _isFunction = _interopRequireDefault(require("lodash/isFunction"));
-var _isPlainObject = _interopRequireDefault(require("lodash/isPlainObject"));
-var _isBoolean = _interopRequireDefault(require("lodash/isBoolean"));
-var _isEqual = _interopRequireDefault(require("lodash/isEqual"));
-var _Rectangle = require("../shape/Rectangle");
-var _Trapezoid = require("../shape/Trapezoid");
-var _Sector = require("../shape/Sector");
-var _Layer = require("../container/Layer");
-var _Symbols = require("../shape/Symbols");
 var _excluded = ["option", "shapeType", "propTransformer", "activeClassName", "isActive"];
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } } return target; }
@@ -34,6 +7,17 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+import React, { isValidElement, cloneElement } from 'react';
+import isFunction from 'lodash/isFunction';
+import isPlainObject from 'lodash/isPlainObject';
+import isBoolean from 'lodash/isBoolean';
+import isEqual from 'lodash/isEqual';
+import { Rectangle } from '../shape/Rectangle';
+import { Trapezoid } from '../shape/Trapezoid';
+import { Sector } from '../shape/Sector';
+import { Layer } from '../container/Layer';
+import { Symbols } from '../shape/Symbols';
+
 /**
  * This is an abstraction for rendering a user defined prop for a customized shape in several forms.
  *
@@ -59,27 +43,27 @@ function ShapeSelector(_ref) {
     elementProps = _ref.elementProps;
   switch (shapeType) {
     case 'rectangle':
-      return /*#__PURE__*/_react["default"].createElement(_Rectangle.Rectangle, elementProps);
+      return /*#__PURE__*/React.createElement(Rectangle, elementProps);
     case 'trapezoid':
-      return /*#__PURE__*/_react["default"].createElement(_Trapezoid.Trapezoid, elementProps);
+      return /*#__PURE__*/React.createElement(Trapezoid, elementProps);
     case 'sector':
-      return /*#__PURE__*/_react["default"].createElement(_Sector.Sector, elementProps);
+      return /*#__PURE__*/React.createElement(Sector, elementProps);
     case 'symbols':
       if (isSymbolsProps(shapeType, elementProps)) {
-        return /*#__PURE__*/_react["default"].createElement(_Symbols.Symbols, elementProps);
+        return /*#__PURE__*/React.createElement(Symbols, elementProps);
       }
       break;
     default:
       return null;
   }
 }
-function getPropsFromShapeOption(option) {
-  if ( /*#__PURE__*/(0, _react.isValidElement)(option)) {
+export function getPropsFromShapeOption(option) {
+  if ( /*#__PURE__*/isValidElement(option)) {
     return option.props;
   }
   return option;
 }
-function Shape(_ref2) {
+export function Shape(_ref2) {
   var option = _ref2.option,
     shapeType = _ref2.shapeType,
     _ref2$propTransformer = _ref2.propTransformer,
@@ -89,25 +73,25 @@ function Shape(_ref2) {
     isActive = _ref2.isActive,
     props = _objectWithoutProperties(_ref2, _excluded);
   var shape;
-  if ( /*#__PURE__*/(0, _react.isValidElement)(option)) {
-    shape = /*#__PURE__*/(0, _react.cloneElement)(option, _objectSpread(_objectSpread({}, props), getPropsFromShapeOption(option)));
-  } else if ((0, _isFunction["default"])(option)) {
+  if ( /*#__PURE__*/isValidElement(option)) {
+    shape = /*#__PURE__*/cloneElement(option, _objectSpread(_objectSpread({}, props), getPropsFromShapeOption(option)));
+  } else if (isFunction(option)) {
     shape = option(props);
-  } else if ((0, _isPlainObject["default"])(option) && !(0, _isBoolean["default"])(option)) {
+  } else if (isPlainObject(option) && !isBoolean(option)) {
     var nextProps = propTransformer(option, props);
-    shape = /*#__PURE__*/_react["default"].createElement(ShapeSelector, {
+    shape = /*#__PURE__*/React.createElement(ShapeSelector, {
       shapeType: shapeType,
       elementProps: nextProps
     });
   } else {
     var elementProps = props;
-    shape = /*#__PURE__*/_react["default"].createElement(ShapeSelector, {
+    shape = /*#__PURE__*/React.createElement(ShapeSelector, {
       shapeType: shapeType,
       elementProps: elementProps
     });
   }
   if (isActive) {
-    return /*#__PURE__*/_react["default"].createElement(_Layer.Layer, {
+    return /*#__PURE__*/React.createElement(Layer, {
       className: activeClassName
     }, shape);
   }
@@ -118,27 +102,27 @@ function Shape(_ref2) {
  * This is an abstraction to handle identifying the active index from a tooltip mouse interaction
  */
 
-function isFunnel(graphicalItem, _item) {
+export function isFunnel(graphicalItem, _item) {
   return _item != null && 'trapezoids' in graphicalItem.props;
 }
-function isPie(graphicalItem, _item) {
+export function isPie(graphicalItem, _item) {
   return _item != null && 'sectors' in graphicalItem.props;
 }
-function isScatter(graphicalItem, _item) {
+export function isScatter(graphicalItem, _item) {
   return _item != null && 'points' in graphicalItem.props;
 }
-function compareFunnel(shapeData, activeTooltipItem) {
+export function compareFunnel(shapeData, activeTooltipItem) {
   var _activeTooltipItem$la, _activeTooltipItem$la2;
   var xMatches = shapeData.x === (activeTooltipItem === null || activeTooltipItem === void 0 || (_activeTooltipItem$la = activeTooltipItem.labelViewBox) === null || _activeTooltipItem$la === void 0 ? void 0 : _activeTooltipItem$la.x) || shapeData.x === activeTooltipItem.x;
   var yMatches = shapeData.y === (activeTooltipItem === null || activeTooltipItem === void 0 || (_activeTooltipItem$la2 = activeTooltipItem.labelViewBox) === null || _activeTooltipItem$la2 === void 0 ? void 0 : _activeTooltipItem$la2.y) || shapeData.y === activeTooltipItem.y;
   return xMatches && yMatches;
 }
-function comparePie(shapeData, activeTooltipItem) {
+export function comparePie(shapeData, activeTooltipItem) {
   var startAngleMatches = shapeData.endAngle === activeTooltipItem.endAngle;
   var endAngleMatches = shapeData.startAngle === activeTooltipItem.startAngle;
   return startAngleMatches && endAngleMatches;
 }
-function compareScatter(shapeData, activeTooltipItem) {
+export function compareScatter(shapeData, activeTooltipItem) {
   var xMatches = shapeData.x === activeTooltipItem.x;
   var yMatches = shapeData.y === activeTooltipItem.y;
   var zMatches = shapeData.z === activeTooltipItem.z;
@@ -190,14 +174,14 @@ function getActiveShapeTooltipPayload(graphicalItem, activeItem) {
  * and match the mouse coordinates of the active item to the coordinates of in a particular components shape data.
  * This assumes equal lengths of shape objects to data items.
  */
-function getActiveShapeIndexForTooltip(_ref3) {
+export function getActiveShapeIndexForTooltip(_ref3) {
   var activeTooltipItem = _ref3.activeTooltipItem,
     graphicalItem = _ref3.graphicalItem,
     itemData = _ref3.itemData;
   var shapeKey = getShapeDataKey(graphicalItem, activeTooltipItem);
   var tooltipPayload = getActiveShapeTooltipPayload(graphicalItem, activeTooltipItem);
   var activeItemMatches = itemData.filter(function (datum, dataIndex) {
-    var valuesMatch = (0, _isEqual["default"])(tooltipPayload, datum);
+    var valuesMatch = isEqual(tooltipPayload, datum);
     var mouseCoordinateMatches = graphicalItem.props[shapeKey].filter(function (shapeData) {
       var comparison = getComparisonFn(graphicalItem, activeTooltipItem);
       return comparison(shapeData, activeTooltipItem);

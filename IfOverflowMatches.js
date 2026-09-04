@@ -1,10 +1,4 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ifOverflowMatches = void 0;
-var ifOverflowMatches = exports.ifOverflowMatches = function ifOverflowMatches(props, value) {
+export var ifOverflowMatches = function ifOverflowMatches(props, value) {
   var alwaysShow = props.alwaysShow;
   var ifOverflow = props.ifOverflow;
   if (alwaysShow) {

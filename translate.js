@@ -1,30 +1,20 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getTooltipCSSClassName = getTooltipCSSClassName;
-exports.getTooltipTranslate = getTooltipTranslate;
-exports.getTooltipTranslateXY = getTooltipTranslateXY;
-exports.getTransformStyle = getTransformStyle;
-var _clsx2 = _interopRequireDefault(require("clsx"));
-var _DataUtils = require("../DataUtils");
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+import clsx from 'clsx';
+import { isNumber } from '../DataUtils';
 var CSS_CLASS_PREFIX = 'recharts-tooltip-wrapper';
 var TOOLTIP_HIDDEN = {
   visibility: 'hidden'
 };
-function getTooltipCSSClassName(_ref) {
+export function getTooltipCSSClassName(_ref) {
   var coordinate = _ref.coordinate,
     translateX = _ref.translateX,
     translateY = _ref.translateY;
-  return (0, _clsx2["default"])(CSS_CLASS_PREFIX, _defineProperty(_defineProperty(_defineProperty(_defineProperty({}, "".concat(CSS_CLASS_PREFIX, "-right"), (0, _DataUtils.isNumber)(translateX) && coordinate && (0, _DataUtils.isNumber)(coordinate.x) && translateX >= coordinate.x), "".concat(CSS_CLASS_PREFIX, "-left"), (0, _DataUtils.isNumber)(translateX) && coordinate && (0, _DataUtils.isNumber)(coordinate.x) && translateX < coordinate.x), "".concat(CSS_CLASS_PREFIX, "-bottom"), (0, _DataUtils.isNumber)(translateY) && coordinate && (0, _DataUtils.isNumber)(coordinate.y) && translateY >= coordinate.y), "".concat(CSS_CLASS_PREFIX, "-top"), (0, _DataUtils.isNumber)(translateY) && coordinate && (0, _DataUtils.isNumber)(coordinate.y) && translateY < coordinate.y));
+  return clsx(CSS_CLASS_PREFIX, _defineProperty(_defineProperty(_defineProperty(_defineProperty({}, "".concat(CSS_CLASS_PREFIX, "-right"), isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX >= coordinate.x), "".concat(CSS_CLASS_PREFIX, "-left"), isNumber(translateX) && coordinate && isNumber(coordinate.x) && translateX < coordinate.x), "".concat(CSS_CLASS_PREFIX, "-bottom"), isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY >= coordinate.y), "".concat(CSS_CLASS_PREFIX, "-top"), isNumber(translateY) && coordinate && isNumber(coordinate.y) && translateY < coordinate.y));
 }
-function getTooltipTranslateXY(_ref2) {
+export function getTooltipTranslateXY(_ref2) {
   var allowEscapeViewBox = _ref2.allowEscapeViewBox,
     coordinate = _ref2.coordinate,
     key = _ref2.key,
@@ -34,7 +24,7 @@ function getTooltipTranslateXY(_ref2) {
     tooltipDimension = _ref2.tooltipDimension,
     viewBox = _ref2.viewBox,
     viewBoxDimension = _ref2.viewBoxDimension;
-  if (position && (0, _DataUtils.isNumber)(position[key])) {
+  if (position && isNumber(position[key])) {
     return position[key];
   }
   var negative = coordinate[key] - tooltipDimension - offsetTopLeft;
@@ -57,7 +47,7 @@ function getTooltipTranslateXY(_ref2) {
   }
   return Math.max(positive, viewBox[key]);
 }
-function getTransformStyle(_ref3) {
+export function getTransformStyle(_ref3) {
   var translateX = _ref3.translateX,
     translateY = _ref3.translateY,
     useTranslate3d = _ref3.useTranslate3d;
@@ -65,7 +55,7 @@ function getTransformStyle(_ref3) {
     transform: useTranslate3d ? "translate3d(".concat(translateX, "px, ").concat(translateY, "px, 0)") : "translate(".concat(translateX, "px, ").concat(translateY, "px)")
   };
 }
-function getTooltipTranslate(_ref4) {
+export function getTooltipTranslate(_ref4) {
   var allowEscapeViewBox = _ref4.allowEscapeViewBox,
     coordinate = _ref4.coordinate,
     offsetTopLeft = _ref4.offsetTopLeft,
