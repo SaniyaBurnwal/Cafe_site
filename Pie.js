@@ -1,34 +1,4 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Pie = void 0;
-var _react = _interopRequireWildcard(require("react"));
-var _reactSmooth = _interopRequireDefault(require("react-smooth"));
-var _get = _interopRequireDefault(require("lodash/get"));
-var _isEqual = _interopRequireDefault(require("lodash/isEqual"));
-var _isNil = _interopRequireDefault(require("lodash/isNil"));
-var _isFunction = _interopRequireDefault(require("lodash/isFunction"));
-var _clsx = _interopRequireDefault(require("clsx"));
-var _Layer = require("../container/Layer");
-var _Curve = require("../shape/Curve");
-var _Text = require("../component/Text");
-var _Label = require("../component/Label");
-var _LabelList = require("../component/LabelList");
-var _Cell = require("../component/Cell");
-var _ReactUtils = require("../util/ReactUtils");
-var _Global = require("../util/Global");
-var _PolarUtils = require("../util/PolarUtils");
-var _DataUtils = require("../util/DataUtils");
-var _ChartUtils = require("../util/ChartUtils");
-var _LogUtils = require("../util/LogUtils");
-var _types = require("../util/types");
-var _ActiveShapeUtils = require("../util/ActiveShapeUtils");
 var _Pie;
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { "default": e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n["default"] = e, t && t.set(e, n), n; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -45,23 +15,45 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); } /**
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+/**
  * @fileOverview Render sectors of a pie
  */
-var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
+import React, { PureComponent } from 'react';
+import Animate from 'react-smooth';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import isNil from 'lodash/isNil';
+import isFunction from 'lodash/isFunction';
+import clsx from 'clsx';
+import { Layer } from '../container/Layer';
+import { Curve } from '../shape/Curve';
+import { Text } from '../component/Text';
+import { Label } from '../component/Label';
+import { LabelList } from '../component/LabelList';
+import { Cell } from '../component/Cell';
+import { findAllByType, filterProps } from '../util/ReactUtils';
+import { Global } from '../util/Global';
+import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
+import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
+import { getValueByDataKey } from '../util/ChartUtils';
+import { warn } from '../util/LogUtils';
+import { adaptEventsOfChild } from '../util/types';
+import { Shape } from '../util/ActiveShapeUtils';
+export var Pie = /*#__PURE__*/function (_PureComponent) {
   function Pie(props) {
     var _this;
     _classCallCheck(this, Pie);
     _this = _callSuper(this, Pie, [props]);
     _defineProperty(_this, "pieRef", null);
     _defineProperty(_this, "sectorRefs", []);
-    _defineProperty(_this, "id", (0, _DataUtils.uniqueId)('recharts-pie-'));
+    _defineProperty(_this, "id", uniqueId('recharts-pie-'));
     _defineProperty(_this, "handleAnimationEnd", function () {
       var onAnimationEnd = _this.props.onAnimationEnd;
       _this.setState({
         isAnimationFinished: true
       });
-      if ((0, _isFunction["default"])(onAnimationEnd)) {
+      if (isFunction(onAnimationEnd)) {
         onAnimationEnd();
       }
     });
@@ -70,7 +62,7 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
       _this.setState({
         isAnimationFinished: false
       });
-      if ((0, _isFunction["default"])(onAnimationStart)) {
+      if (isFunction(onAnimationStart)) {
         onAnimationStart();
       }
     });
@@ -110,13 +102,13 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
         labelLine = _this$props.labelLine,
         dataKey = _this$props.dataKey,
         valueKey = _this$props.valueKey;
-      var pieProps = (0, _ReactUtils.filterProps)(this.props, false);
-      var customLabelProps = (0, _ReactUtils.filterProps)(label, false);
-      var customLabelLineProps = (0, _ReactUtils.filterProps)(labelLine, false);
+      var pieProps = filterProps(this.props, false);
+      var customLabelProps = filterProps(label, false);
+      var customLabelLineProps = filterProps(labelLine, false);
       var offsetRadius = label && label.offsetRadius || 20;
       var labels = sectors.map(function (entry, i) {
         var midAngle = (entry.startAngle + entry.endAngle) / 2;
-        var endPoint = (0, _PolarUtils.polarToCartesian)(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
+        var endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
         var labelProps = _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, pieProps), entry), {}, {
           stroke: 'none'
         }, customLabelProps), {}, {
@@ -128,24 +120,24 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
           stroke: entry.fill
         }, customLabelLineProps), {}, {
           index: i,
-          points: [(0, _PolarUtils.polarToCartesian)(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint]
+          points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint]
         });
         var realDataKey = dataKey;
         // TODO: compatible to lower versions
-        if ((0, _isNil["default"])(dataKey) && (0, _isNil["default"])(valueKey)) {
+        if (isNil(dataKey) && isNil(valueKey)) {
           realDataKey = 'value';
-        } else if ((0, _isNil["default"])(dataKey)) {
+        } else if (isNil(dataKey)) {
           realDataKey = valueKey;
         }
         return (
           /*#__PURE__*/
           // eslint-disable-next-line react/no-array-index-key
-          _react["default"].createElement(_Layer.Layer, {
+          React.createElement(Layer, {
             key: "label-".concat(entry.startAngle, "-").concat(entry.endAngle, "-").concat(entry.midAngle, "-").concat(i)
-          }, labelLine && Pie.renderLabelLineItem(labelLine, lineProps, 'line'), Pie.renderLabelItem(label, labelProps, (0, _ChartUtils.getValueByDataKey)(entry, realDataKey)))
+          }, labelLine && Pie.renderLabelLineItem(labelLine, lineProps, 'line'), Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey)))
         );
       });
-      return /*#__PURE__*/_react["default"].createElement(_Layer.Layer, {
+      return /*#__PURE__*/React.createElement(Layer, {
         className: "recharts-pie-labels"
       }, labels);
     }
@@ -166,7 +158,7 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
           stroke: blendStroke ? entry.fill : entry.stroke,
           tabIndex: -1
         });
-        return /*#__PURE__*/_react["default"].createElement(_Layer.Layer, _extends({
+        return /*#__PURE__*/React.createElement(Layer, _extends({
           ref: function ref(_ref) {
             if (_ref && !_this2.sectorRefs.includes(_ref)) {
               _this2.sectorRefs.push(_ref);
@@ -174,10 +166,10 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
           },
           tabIndex: -1,
           className: "recharts-pie-sector"
-        }, (0, _types.adaptEventsOfChild)(_this2.props, entry, i), {
+        }, adaptEventsOfChild(_this2.props, entry, i), {
           // eslint-disable-next-line react/no-array-index-key
           key: "sector-".concat(entry === null || entry === void 0 ? void 0 : entry.startAngle, "-").concat(entry === null || entry === void 0 ? void 0 : entry.endAngle, "-").concat(entry.midAngle, "-").concat(i)
-        }), /*#__PURE__*/_react["default"].createElement(_ActiveShapeUtils.Shape, _extends({
+        }), /*#__PURE__*/React.createElement(Shape, _extends({
           option: sectorOptions,
           isActive: isActive,
           shapeType: "sector"
@@ -198,7 +190,7 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
       var _this$state = this.state,
         prevSectors = _this$state.prevSectors,
         prevIsAnimationActive = _this$state.prevIsAnimationActive;
-      return /*#__PURE__*/_react["default"].createElement(_reactSmooth["default"], {
+      return /*#__PURE__*/React.createElement(Animate, {
         begin: animationBegin,
         duration: animationDuration,
         isActive: isAnimationActive,
@@ -219,9 +211,9 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
         var curAngle = first.startAngle;
         sectors.forEach(function (entry, index) {
           var prev = prevSectors && prevSectors[index];
-          var paddingAngle = index > 0 ? (0, _get["default"])(entry, 'paddingAngle', 0) : 0;
+          var paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
           if (prev) {
-            var angleIp = (0, _DataUtils.interpolateNumber)(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
+            var angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
             var latest = _objectSpread(_objectSpread({}, entry), {}, {
               startAngle: curAngle + paddingAngle,
               endAngle: curAngle + angleIp(t) + paddingAngle
@@ -231,7 +223,7 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
           } else {
             var endAngle = entry.endAngle,
               startAngle = entry.startAngle;
-            var interpolatorAngle = (0, _DataUtils.interpolateNumber)(0, endAngle - startAngle);
+            var interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
             var deltaAngle = interpolatorAngle(t);
             var _latest = _objectSpread(_objectSpread({}, entry), {}, {
               startAngle: curAngle + paddingAngle,
@@ -241,7 +233,7 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
             curAngle = _latest.endAngle;
           }
         });
-        return /*#__PURE__*/_react["default"].createElement(_Layer.Layer, null, _this3.renderSectorsStatically(stepData));
+        return /*#__PURE__*/React.createElement(Layer, null, _this3.renderSectorsStatically(stepData));
       });
     }
   }, {
@@ -293,7 +285,7 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
         sectors = _this$props4.sectors,
         isAnimationActive = _this$props4.isAnimationActive;
       var prevSectors = this.state.prevSectors;
-      if (isAnimationActive && sectors && sectors.length && (!prevSectors || !(0, _isEqual["default"])(prevSectors, sectors))) {
+      if (isAnimationActive && sectors && sectors.length && (!prevSectors || !isEqual(prevSectors, sectors))) {
         return this.renderSectorsWithAnimation();
       }
       return this.renderSectorsStatically(sectors);
@@ -320,17 +312,17 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
         outerRadius = _this$props5.outerRadius,
         isAnimationActive = _this$props5.isAnimationActive;
       var isAnimationFinished = this.state.isAnimationFinished;
-      if (hide || !sectors || !sectors.length || !(0, _DataUtils.isNumber)(cx) || !(0, _DataUtils.isNumber)(cy) || !(0, _DataUtils.isNumber)(innerRadius) || !(0, _DataUtils.isNumber)(outerRadius)) {
+      if (hide || !sectors || !sectors.length || !isNumber(cx) || !isNumber(cy) || !isNumber(innerRadius) || !isNumber(outerRadius)) {
         return null;
       }
-      var layerClass = (0, _clsx["default"])('recharts-pie', className);
-      return /*#__PURE__*/_react["default"].createElement(_Layer.Layer, {
+      var layerClass = clsx('recharts-pie', className);
+      return /*#__PURE__*/React.createElement(Layer, {
         tabIndex: this.props.rootTabIndex,
         className: layerClass,
         ref: function ref(_ref3) {
           _this5.pieRef = _ref3;
         }
-      }, this.renderSectors(), label && this.renderLabels(sectors), _Label.Label.renderCallByParent(this.props, null, false), (!isAnimationActive || isAnimationFinished) && _LabelList.LabelList.renderCallByParent(this.props, sectors, false));
+      }, this.renderSectors(), label && this.renderLabels(sectors), Label.renderCallByParent(this.props, null, false), (!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false));
     }
   }], [{
     key: "getDerivedStateFromProps",
@@ -374,14 +366,14 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
   }, {
     key: "renderLabelLineItem",
     value: function renderLabelLineItem(option, props, key) {
-      if ( /*#__PURE__*/_react["default"].isValidElement(option)) {
-        return /*#__PURE__*/_react["default"].cloneElement(option, props);
+      if ( /*#__PURE__*/React.isValidElement(option)) {
+        return /*#__PURE__*/React.cloneElement(option, props);
       }
-      if ((0, _isFunction["default"])(option)) {
+      if (isFunction(option)) {
         return option(props);
       }
-      var className = (0, _clsx["default"])('recharts-pie-label-line', typeof option !== 'boolean' ? option.className : '');
-      return /*#__PURE__*/_react["default"].createElement(_Curve.Curve, _extends({}, props, {
+      var className = clsx('recharts-pie-label-line', typeof option !== 'boolean' ? option.className : '');
+      return /*#__PURE__*/React.createElement(Curve, _extends({}, props, {
         key: key,
         type: "linear",
         className: className
@@ -390,24 +382,24 @@ var Pie = exports.Pie = /*#__PURE__*/function (_PureComponent) {
   }, {
     key: "renderLabelItem",
     value: function renderLabelItem(option, props, value) {
-      if ( /*#__PURE__*/_react["default"].isValidElement(option)) {
-        return /*#__PURE__*/_react["default"].cloneElement(option, props);
+      if ( /*#__PURE__*/React.isValidElement(option)) {
+        return /*#__PURE__*/React.cloneElement(option, props);
       }
       var label = value;
-      if ((0, _isFunction["default"])(option)) {
+      if (isFunction(option)) {
         label = option(props);
-        if ( /*#__PURE__*/_react["default"].isValidElement(label)) {
+        if ( /*#__PURE__*/React.isValidElement(label)) {
           return label;
         }
       }
-      var className = (0, _clsx["default"])('recharts-pie-label-text', typeof option !== 'boolean' && !(0, _isFunction["default"])(option) ? option.className : '');
-      return /*#__PURE__*/_react["default"].createElement(_Text.Text, _extends({}, props, {
+      var className = clsx('recharts-pie-label-text', typeof option !== 'boolean' && !isFunction(option) ? option.className : '');
+      return /*#__PURE__*/React.createElement(Text, _extends({}, props, {
         alignmentBaseline: "middle",
         className: className
       }), label);
     }
   }]);
-}(_react.PureComponent);
+}(PureComponent);
 _Pie = Pie;
 _defineProperty(Pie, "displayName", 'Pie');
 _defineProperty(Pie, "defaultProps", {
@@ -424,7 +416,7 @@ _defineProperty(Pie, "defaultProps", {
   labelLine: true,
   hide: false,
   minAngle: 0,
-  isAnimationActive: !_Global.Global.isSsr,
+  isAnimationActive: !Global.isSsr,
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',
@@ -433,15 +425,15 @@ _defineProperty(Pie, "defaultProps", {
   rootTabIndex: 0
 });
 _defineProperty(Pie, "parseDeltaAngle", function (startAngle, endAngle) {
-  var sign = (0, _DataUtils.mathSign)(endAngle - startAngle);
+  var sign = mathSign(endAngle - startAngle);
   var deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
   return sign * deltaAngle;
 });
 _defineProperty(Pie, "getRealPieData", function (itemProps) {
   var data = itemProps.data,
     children = itemProps.children;
-  var presentationProps = (0, _ReactUtils.filterProps)(itemProps, false);
-  var cells = (0, _ReactUtils.findAllByType)(children, _Cell.Cell);
+  var presentationProps = filterProps(itemProps, false);
+  var cells = findAllByType(children, Cell);
   if (data && data.length) {
     return data.map(function (entry, index) {
       return _objectSpread(_objectSpread(_objectSpread({
@@ -461,11 +453,11 @@ _defineProperty(Pie, "parseCoordinateOfPie", function (itemProps, offset) {
     left = offset.left,
     width = offset.width,
     height = offset.height;
-  var maxPieRadius = (0, _PolarUtils.getMaxRadius)(width, height);
-  var cx = left + (0, _DataUtils.getPercentValue)(itemProps.cx, width, width / 2);
-  var cy = top + (0, _DataUtils.getPercentValue)(itemProps.cy, height, height / 2);
-  var innerRadius = (0, _DataUtils.getPercentValue)(itemProps.innerRadius, maxPieRadius, 0);
-  var outerRadius = (0, _DataUtils.getPercentValue)(itemProps.outerRadius, maxPieRadius, maxPieRadius * 0.8);
+  var maxPieRadius = getMaxRadius(width, height);
+  var cx = left + getPercentValue(itemProps.cx, width, width / 2);
+  var cy = top + getPercentValue(itemProps.cy, height, height / 2);
+  var innerRadius = getPercentValue(itemProps.innerRadius, maxPieRadius, 0);
+  var outerRadius = getPercentValue(itemProps.outerRadius, maxPieRadius, maxPieRadius * 0.8);
   var maxRadius = itemProps.maxRadius || Math.sqrt(width * width + height * height) / 2;
   return {
     cx: cx,
@@ -496,36 +488,36 @@ _defineProperty(Pie, "getComposedData", function (_ref4) {
   var deltaAngle = _Pie.parseDeltaAngle(startAngle, endAngle);
   var absDeltaAngle = Math.abs(deltaAngle);
   var realDataKey = dataKey;
-  if ((0, _isNil["default"])(dataKey) && (0, _isNil["default"])(valueKey)) {
-    (0, _LogUtils.warn)(false, "Use \"dataKey\" to specify the value of pie,\n      the props \"valueKey\" will be deprecated in 1.1.0");
+  if (isNil(dataKey) && isNil(valueKey)) {
+    warn(false, "Use \"dataKey\" to specify the value of pie,\n      the props \"valueKey\" will be deprecated in 1.1.0");
     realDataKey = 'value';
-  } else if ((0, _isNil["default"])(dataKey)) {
-    (0, _LogUtils.warn)(false, "Use \"dataKey\" to specify the value of pie,\n      the props \"valueKey\" will be deprecated in 1.1.0");
+  } else if (isNil(dataKey)) {
+    warn(false, "Use \"dataKey\" to specify the value of pie,\n      the props \"valueKey\" will be deprecated in 1.1.0");
     realDataKey = valueKey;
   }
   var notZeroItemCount = pieData.filter(function (entry) {
-    return (0, _ChartUtils.getValueByDataKey)(entry, realDataKey, 0) !== 0;
+    return getValueByDataKey(entry, realDataKey, 0) !== 0;
   }).length;
   var totalPadingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
   var realTotalAngle = absDeltaAngle - notZeroItemCount * minAngle - totalPadingAngle;
   var sum = pieData.reduce(function (result, entry) {
-    var val = (0, _ChartUtils.getValueByDataKey)(entry, realDataKey, 0);
-    return result + ((0, _DataUtils.isNumber)(val) ? val : 0);
+    var val = getValueByDataKey(entry, realDataKey, 0);
+    return result + (isNumber(val) ? val : 0);
   }, 0);
   var sectors;
   if (sum > 0) {
     var prev;
     sectors = pieData.map(function (entry, i) {
-      var val = (0, _ChartUtils.getValueByDataKey)(entry, realDataKey, 0);
-      var name = (0, _ChartUtils.getValueByDataKey)(entry, nameKey, i);
-      var percent = ((0, _DataUtils.isNumber)(val) ? val : 0) / sum;
+      var val = getValueByDataKey(entry, realDataKey, 0);
+      var name = getValueByDataKey(entry, nameKey, i);
+      var percent = (isNumber(val) ? val : 0) / sum;
       var tempStartAngle;
       if (i) {
-        tempStartAngle = prev.endAngle + (0, _DataUtils.mathSign)(deltaAngle) * paddingAngle * (val !== 0 ? 1 : 0);
+        tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (val !== 0 ? 1 : 0);
       } else {
         tempStartAngle = startAngle;
       }
-      var tempEndAngle = tempStartAngle + (0, _DataUtils.mathSign)(deltaAngle) * ((val !== 0 ? minAngle : 0) + percent * realTotalAngle);
+      var tempEndAngle = tempStartAngle + mathSign(deltaAngle) * ((val !== 0 ? minAngle : 0) + percent * realTotalAngle);
       var midAngle = (tempStartAngle + tempEndAngle) / 2;
       var middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
       var tooltipPayload = [{
@@ -535,7 +527,7 @@ _defineProperty(Pie, "getComposedData", function (_ref4) {
         dataKey: realDataKey,
         type: tooltipType
       }];
-      var tooltipPosition = (0, _PolarUtils.polarToCartesian)(coordinate.cx, coordinate.cy, middleRadius, midAngle);
+      var tooltipPosition = polarToCartesian(coordinate.cx, coordinate.cy, middleRadius, midAngle);
       prev = _objectSpread(_objectSpread(_objectSpread({
         percent: percent,
         cornerRadius: cornerRadius,
@@ -545,11 +537,11 @@ _defineProperty(Pie, "getComposedData", function (_ref4) {
         middleRadius: middleRadius,
         tooltipPosition: tooltipPosition
       }, entry), coordinate), {}, {
-        value: (0, _ChartUtils.getValueByDataKey)(entry, realDataKey),
+        value: getValueByDataKey(entry, realDataKey),
         startAngle: tempStartAngle,
         endAngle: tempEndAngle,
         payload: entry,
-        paddingAngle: (0, _DataUtils.mathSign)(deltaAngle) * paddingAngle
+        paddingAngle: mathSign(deltaAngle) * paddingAngle
       });
       return prev;
     });
