@@ -1,126 +1,249 @@
-# Recharts
+# react-resizable-panels
 
-[![storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://release--63da8268a0da9970db6992aa.chromatic.com/)
-[![Build Status](https://github.com/recharts/recharts/workflows/Node.js%20CI/badge.svg)](https://github.com/recharts/recharts/actions)
-[![Coverage Status](https://coveralls.io/repos/recharts/recharts/badge.svg?branch=master&service=github)](https://coveralls.io/github/recharts/recharts?branch=master)
-[![npm version](https://badge.fury.io/js/recharts.svg)](http://badge.fury.io/js/recharts)
-[![npm downloads](https://img.shields.io/npm/dm/recharts.svg?style=flat-square)](https://www.npmjs.com/package/recharts)
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE)
-
-## Introduction
-
-Recharts is a **Redefined** chart library built with [React](https://facebook.github.io/react/) and [D3](http://d3js.org).
-
-The main purpose of this library is to help you to write charts in React applications without any pain. Main principles of Recharts are:
-
-1. **Simply** deploy with React components.
-2. **Native** SVG support, lightweight depending only on some D3 submodules.
-3. **Declarative** components, components of charts are purely presentational.
-
-Documentation at [recharts.org](https://recharts.org) and our [storybook (WIP)](https://release--63da8268a0da9970db6992aa.chromatic.com/)
-
-Please see [the wiki](https://github.com/recharts/recharts/wiki) for FAQ.
-
-All development is done on the `master` branch. The current latest release and storybook documentation reflects what is on the `release` branch.
-
-## Examples
+React components for resizable panel groups/layouts
 
 ```jsx
-<LineChart width={400} height={400} data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-  <XAxis dataKey="name" />
-  <Tooltip />
-  <CartesianGrid stroke="#f5f5f5" />
-  <Line type="monotone" dataKey="uv" stroke="#ff7300" yAxisId={0} />
-  <Line type="monotone" dataKey="pv" stroke="#387908" yAxisId={1} />
-</LineChart>
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+
+<PanelGroup autoSaveId="example" direction="horizontal">
+  <Panel defaultSize={25}>
+    <SourcesExplorer />
+  </Panel>
+  <PanelResizeHandle />
+  <Panel>
+    <SourceViewer />
+  </Panel>
+  <PanelResizeHandle />
+  <Panel defaultSize={25}>
+    <Console />
+  </Panel>
+</PanelGroup>;
 ```
 
-All the components of Recharts are clearly separated. The lineChart is composed of x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear separation and composition of components is one of the principle Recharts follows.
+## If you like this project, 🎉 [become a sponsor](https://github.com/sponsors/bvaughn/) or ☕ [buy me a coffee](http://givebrian.coffee/)
 
-## Installation
+## Props
 
-### npm
+### `PanelGroup`
 
-NPM is the easiest and fastest way to get started using Recharts. It is also the recommended installation method when building single-page applications (SPAs). It pairs nicely with a CommonJS module bundler such as Webpack.
+| prop         | type                         | description                                                      |
+| :----------- | :--------------------------- | :--------------------------------------------------------------- |
+| `autoSaveId` | `?string`                    | Unique id used to auto-save group arrangement via `localStorage` |
+| `children`   | `ReactNode`                  | Arbitrary React element(s)                                       |
+| `className`  | `?string`                    | Class name to attach to root element                             |
+| `direction`  | `"horizontal" \| "vertical"` | Group orientation                                                |
+| `id`         | `?string`                    | Group id; falls back to `useId` when not provided                |
+| `onLayout`   | `?(sizes: number[]) => void` | Called when group layout changes                                 |
+| `storage`    | `?PanelGroupStorage`         | Custom storage API; defaults to `localStorage` <sup>1</sup>      |
+| `style`      | `?CSSProperties`             | CSS style to attach to root element                              |
+| `tagName`    | `?string = "div"`            | HTML element tag name for root element                           |
 
-```sh
-# latest stable
-$ npm install recharts
+<sup>1</sup>: Storage API must define the following _synchronous_ methods:
+
+- `getItem: (name:string) => string`
+- `setItem: (name: string, value: string) => void`
+
+`PanelGroup` components also expose an imperative API for manual resizing:
+| method                        | description                                                      |
+| :---------------------------- | :--------------------------------------------------------------- |
+| `getId(): string`             | Gets the panel group's ID.                                       |
+| `getLayout(): number[]`       | Gets the panel group's current _layout_ (`[1 - 100, ...]`).      |
+| `setLayout(layout: number[])` | Resize panel group to the specified _layout_ (`[1 - 100, ...]`). |
+
+### `Panel`
+
+| prop            | type                      | description                                                                                   |
+| :-------------- | :------------------------ | :-------------------------------------------------------------------------------------------- |
+| `children`      | `ReactNode`               | Arbitrary React element(s)                                                                    |
+| `className`     | `?string`                 | Class name to attach to root element                                                          |
+| `collapsedSize` | `?number=0`               | Panel should collapse to this size                                                            |
+| `collapsible`   | `?boolean=false`          | Panel should collapse when resized beyond its `minSize`                                       |
+| `defaultSize`   | `?number`                 | Initial size of panel (numeric value between 1-100)                                           |
+| `id`            | `?string`                 | Panel id (unique within group); falls back to `useId` when not provided                       |
+| `maxSize`       | `?number = 100`           | Maximum allowable size of panel (numeric value between 1-100); defaults to `100`              |
+| `minSize`       | `?number = 10`            | Minimum allowable size of panel (numeric value between 1-100); defaults to `10`               |
+| `onCollapse`    | `?() => void`             | Called when panel is collapsed                                                                |
+| `onExpand`      | `?() => void`             | Called when panel is expanded                                                                 |
+| `onResize`      | `?(size: number) => void` | Called when panel is resized; `size` parameter is a numeric value between 1-100. <sup>1</sup> |
+| `order`         | `?number`                 | Order of panel within group; required for groups with conditionally rendered panels           |
+| `style`         | `?CSSProperties`          | CSS style to attach to root element                                                           |
+| `tagName`       | `?string = "div"`         | HTML element tag name for root element                                                        |
+
+<sup>1</sup>: If any `Panel` has an `onResize` callback, the `order` prop should be provided for all `Panel`s.
+
+`Panel` components also expose an imperative API for manual resizing:
+| method                   | description                                                                        |
+| :----------------------- | :--------------------------------------------------------------------------------- |
+| `collapse()`             | If panel is `collapsible`, collapse it fully.                                      |
+| `expand()`               | If panel is currently _collapsed_, expand it to its most recent size.              |
+| `getId(): string`        | Gets the ID of the panel.                                                          |
+| `getSize(): number`      | Gets the current size of the panel as a percentage (`1 - 100`).                    |
+| `isCollapsed(): boolean` | Returns `true` if the panel is currently _collapsed_ (`size === 0`).               |
+| `isExpanded(): boolean`  | Returns `true` if the panel is currently _not collapsed_ (`!isCollapsed()`).       |
+| `getSize(): number`      | Returns the most recently committed size of the panel as a percentage (`1 - 100`). |
+| `resize(size: number)`   | Resize panel to the specified _percentage_ (`1 - 100`).                            |
+
+### `PanelResizeHandle`
+
+| prop             | type                                          | description                                                                     |
+| :--------------- | :-------------------------------------------- | :------------------------------------------------------------------------------ |
+| `children`       | `?ReactNode`                                  | Custom drag UI; can be any arbitrary React element(s)                           |
+| `className`      | `?string`                                     | Class name to attach to root element                                            |
+| `hitAreaMargins` | `?{ coarse: number = 15; fine: number = 5; }` | Allow this much margin when determining resizable handle hit detection          |
+| `disabled`       | `?boolean`                                    | Disable drag handle                                                             |
+| `id`             | `?string`                                     | Resize handle id (unique within group); falls back to `useId` when not provided |
+| `onDragging`     | `?(isDragging: boolean) => void`              | Called when group layout changes                                                |
+| `style`          | `?CSSProperties`                              | CSS style to attach to root element                                             |
+| `tagName`        | `?string = "div"`                             | HTML element tag name for root element                                          |
+
+---
+
+## FAQ
+
+### Can panel sizes be specified in pixels?
+
+No. Pixel-based constraints [added significant complexity](https://github.com/bvaughn/react-resizable-panels/pull/176) to the initialization and validation logic and so I've decided not to support them. You may be able to implement a version of this yourself following [a pattern like this](https://github.com/bvaughn/react-resizable-panels/issues/46#issuecomment-1368108416) but it is not officially supported by this library.
+
+### How can I fix layout/sizing problems with conditionally rendered panels?
+
+The `Panel` API doesn't _require_ `id` and `order` props because they aren't necessary for static layouts. When panels are conditionally rendered though, it's best to supply these values.
+
+```tsx
+<PanelGroup direction="horizontal">
+  {renderSideBar && (
+    <>
+      <Panel id="sidebar" minSize={25} order={1}>
+        <Sidebar />
+      </Panel>
+      <PanelResizeHandle />
+    </>
+  )}
+  <Panel minSize={25} order={2}>
+    <Main />
+  </Panel>
+</PanelGroup>
 ```
 
-### umd
+### Can a attach a ref to the DOM elements?
 
-The UMD build is also available on unpkg.com:
+No. I think exposing two refs (one for the component's imperative API and one for a DOM element) would be awkward. This library does export several utility methods for accessing the underlying DOM elements though. For example:
 
-```html
-<script src="https://unpkg.com/react/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+```tsx
+import {
+  getPanelElement,
+  getPanelGroupElement,
+  getResizeHandleElement,
+  Panel,
+  PanelGroup,
+  PanelResizeHandle,
+} from "react-resizable-panels";
+
+export function Example() {
+  const refs = useRef();
+
+  useEffect(() => {
+    const groupElement = getPanelGroupElement("group");
+    const leftPanelElement = getPanelElement("left-panel");
+    const rightPanelElement = getPanelElement("right-panel");
+    const resizeHandleElement = getResizeHandleElement("resize-handle");
+
+    // If you want to, you can store them in a ref to pass around
+    refs.current = {
+      groupElement,
+      leftPanelElement,
+      rightPanelElement,
+      resizeHandleElement,
+    };
+  }, []);
+
+  return (
+    <PanelGroup direction="horizontal" id="group">
+      <Panel id="left-panel">{/* ... */}</Panel>
+      <PanelResizeHandle id="resize-handle" />
+      <Panel id="right-panel">{/* ... */}</Panel>
+    </PanelGroup>
+  );
+}
 ```
 
-Then you can find the library on `window.Recharts`.
+### Why don't I see any resize UI?
 
-### dev build
+This likely means that you haven't applied any CSS to style the resize handles. By default, a resize handle is just an empty DOM element. To add styling, use the `className` or `style` props:
 
-```sh
-$ git clone https://github.com/recharts/recharts.git
-$ cd recharts
-$ npm install
-$ npm run build
+```tsx
+// Tailwind example
+<PanelResizeHandle className="w-2 bg-blue-800" />
 ```
 
-## Demo
+### Can panel sizes be persistent?
 
-To examine the demos in your local build, execute:
+Yes. Panel groups with an `autoSaveId` prop will automatically save and restore their layouts on mount.
 
-```sh
-$ npm run[-script] demo
+### How can I use persistent layouts with SSR?
+
+By default, this library uses `localStorage` to persist layouts. With server rendering, this can cause a flicker when the default layout (rendered on the server) is replaced with the persisted layout (in `localStorage`). The way to avoid this flicker is to also persist the layout with a cookie like so:
+
+#### Server component
+
+```tsx
+import ResizablePanels from "@/app/ResizablePanels";
+import { cookies } from "next/headers";
+
+export function ServerComponent() {
+  const layout = cookies().get("react-resizable-panels:layout");
+
+  let defaultLayout;
+  if (layout) {
+    defaultLayout = JSON.parse(layout.value);
+  }
+
+  return <ClientComponent defaultLayout={defaultLayout} />;
+}
 ```
 
-and then browse to http://localhost:3000.
+#### Client component
 
-## Storybook
+```tsx
+"use client";
 
-We are in the process of unifying documentation and examples in storybook. To run it locally, execute
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-```sh
-$ npm run[-script] storybook
+export function ClientComponent({
+  defaultLayout = [33, 67],
+}: {
+  defaultLayout: number[] | undefined;
+}) {
+  const onLayout = (sizes: number[]) => {
+    document.cookie = `react-resizable-panels:layout=${JSON.stringify(sizes)}`;
+  };
+
+  return (
+    <PanelGroup direction="horizontal" onLayout={onLayout}>
+      <Panel defaultSize={defaultLayout[0]}>{/* ... */}</Panel>
+      <PanelResizeHandle className="w-2 bg-blue-800" />
+      <Panel defaultSize={defaultLayout[1]}>{/* ... */}</Panel>
+    </PanelGroup>
+  );
+}
 ```
 
-and then browse to http://localhost:6006.
+> [!NOTE]
+> Be sure to specify a `defaultSize` prop for **every** `Panel` component to avoid layout flicker.
 
-## Releases
+A demo of this is available [here](https://github.com/bvaughn/react-resizable-panels-demo-ssr).
 
-[Releases](https://github.com/recharts/recharts/releases) are automated via GH Actions - when a new release is created in GH, CI will trigger that:
+#### How can I set the [CSP `"nonce"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) attribute?
 
-1. Runs a build
-2. Runs tests
-3. Runs `npm publish`
+```js
+import { setNonce } from "react-resizable-panels";
 
-Version increments and tagging are not automated at this time.
+setNonce("your-nonce-value-here");
+```
 
-### Release testing
+#### How can I disable global cursor styles?
 
-Until we can automate more, it should be preferred to test as close to the results of `npm publish` as we possibly can. This ensures we don't publish unintended breaking changes. One way to do that is using `yalc` - `npm i -g yalc`.
+```js
+import { disableGlobalCursorStyles } from "react-resizable-panels";
 
-1. Make your changes in recharts
-2. `yalc publish` in recharts
-3. `yalc add recharts` in your test package (ex: in a vite or webpack reach app with recharts installed, imported, and your recent changes used)
-4. `npm install`
-5. Test a local run, a build, etc.
-
-## Module Formats
-
-- [babel-plugin-recharts](https://github.com/recharts/babel-plugin-recharts) A simple transform to cherry-pick Recharts modules so you don’t have to. **Note: this plugin is out of date and may not work with 2.x**
-
-## Thanks
-
-<a href="https://www.chromatic.com/"><img src="https://user-images.githubusercontent.com/321738/84662277-e3db4f80-af1b-11ea-88f5-91d67a5e59f6.png" width="153" height="30" alt="Chromatic" /></a>
-
-Thanks to [Chromatic](https://www.chromatic.com/) for providing the visual testing platform that helps us review UI changes and catch visual regressions.
-
-## License
-
-[MIT](http://opensource.org/licenses/MIT)
-
-Copyright (c) 2015-2023 Recharts Group.
+disableGlobalCursorStyles();
+```
