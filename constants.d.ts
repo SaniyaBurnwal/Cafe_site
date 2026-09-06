@@ -1,15 +1,27 @@
-export declare const DATA_ATTRIBUTES: {
-    readonly group: "data-panel-group";
-    readonly groupDirection: "data-panel-group-direction";
-    readonly groupId: "data-panel-group-id";
-    readonly panel: "data-panel";
-    readonly panelCollapsible: "data-panel-collapsible";
-    readonly panelId: "data-panel-id";
-    readonly panelSize: "data-panel-size";
-    readonly resizeHandle: "data-resize-handle";
-    readonly resizeHandleActive: "data-resize-handle-active";
-    readonly resizeHandleEnabled: "data-panel-resize-handle-enabled";
-    readonly resizeHandleId: "data-panel-resize-handle-id";
-    readonly resizeHandleState: "data-resize-handle-state";
+export declare const EVENTS: {
+    readonly BLUR: "blur";
+    readonly FOCUS_OUT: "focusout";
+    readonly CHANGE: "change";
+    readonly SUBMIT: "submit";
+    readonly TRIGGER: "trigger";
+    readonly VALID: "valid";
 };
-export declare const PRECISION = 10;
+export declare const VALIDATION_MODE: {
+    readonly onBlur: "onBlur";
+    readonly onChange: "onChange";
+    readonly onSubmit: "onSubmit";
+    readonly onTouched: "onTouched";
+    readonly all: "all";
+};
+export declare const INPUT_VALIDATION_RULES: {
+    readonly max: "max";
+    readonly min: "min";
+    readonly maxLength: "maxLength";
+    readonly minLength: "minLength";
+    readonly pattern: "pattern";
+    readonly required: "required";
+    readonly validate: "validate";
+};
+export declare const ROOT_ERROR_TYPE = "root";
+export declare const PROTOTYPE_KEYWORDS: string[];
+//# sourceMappingURL=constants.d.ts.map
