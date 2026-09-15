@@ -1,3 +1,2 @@
-export { default as get } from './get';
-export { default as set } from './set';
-//# sourceMappingURL=index.d.ts.map
+export { UseEmblaCarouselType, EmblaViewportRefType } from './components/useEmblaCarousel';
+export { default } from './components/useEmblaCarousel';
